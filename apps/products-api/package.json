@@ -1,10 +1,12 @@
 {
-  "name": "@demo/products-api",
+  "name": "@api-client-sdk-workflow-demo/products-api",
   "version": "1.0.0",
   "description": "",
   "author": "",
-  "private": true,
   "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",

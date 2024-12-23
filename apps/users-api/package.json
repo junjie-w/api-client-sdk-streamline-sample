@@ -1,10 +1,12 @@
 {
-  "name": "@demo/users-api",
+  "name": "@api-client-sdk-workflow-demo/users-api",
   "version": "1.0.0",
   "description": "",
   "author": "",
-  "private": true,
   "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
