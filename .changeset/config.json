@@ -4,7 +4,9 @@
   "baseBranch": "main",
   "commit": false,
   "fixed": [],
-  "linked": [],
+  "linked": [
+    ["@api-client-sdk-workflow-demo/products-api", "@api-client-sdk-workflow-demo/users-api"]
+  ],
   "access": "public",
   "updateInternalDependencies": "patch",
   "ignore": ["@acme/docs"]
