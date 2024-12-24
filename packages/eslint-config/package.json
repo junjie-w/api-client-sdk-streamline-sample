@@ -1,5 +1,5 @@
 {
-  "name": "@acme/eslint-config",
+  "name": "@api-client-sdk-workflow-sample/eslint-config",
   "version": "0.0.0",
   "private": true,
   "files": [
