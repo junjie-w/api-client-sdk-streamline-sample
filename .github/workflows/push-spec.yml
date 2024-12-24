@@ -77,11 +77,11 @@ jobs:
           API_NAME_WITH_PREFIX="sample-${{ github.event.inputs.api-name }}"
           API_NAME_AND_VERSION="${{ github.event.inputs.api-name }} v${{ github.event.inputs.api-version }}"
         
-          if swaggerhub api:update ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json; then
+          if swaggerhub api:update ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json  --visibility public; then
             echo "✨ Successfully updated $API_NAME_AND_VERSION on SwaggerHub"
           else
             echo "Update $API_NAME_AND_VERSION failed, trying to create..."
-            if swaggerhub api:create ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json; then
+            if swaggerhub api:create ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json  --visibility public; then
               echo "✨ Successfully created $API_NAME_AND_VERSION on SwaggerHub"
             else
               echo "Failed to push $API_NAME_AND_VERSION to SwaggerHub"
