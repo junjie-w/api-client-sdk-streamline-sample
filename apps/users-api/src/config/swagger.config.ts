@@ -1,8 +1,8 @@
-// src/config/swagger.config.ts
 import { DocumentBuilder } from '@nestjs/swagger';
+import { version } from '../../package.json';
 
 export const swaggerConfig = new DocumentBuilder()
-  .setTitle('User Profile')
-  .setDescription('Manage and retrieve user information')
-  .setVersion('1.0.0')
+  .setTitle('Sample Users API')
+  .setDescription('Sample Users API for API client SDK workflow demonstration. Part of api-client-sdk-workflow-sample project, showcasing API to SDK pipeline.')
+  .setVersion(version)
   .build();
