@@ -71,7 +71,7 @@ jobs:
         run: |
           cd apps/${{ github.event.inputs.api-name }}
           
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT \
             "https://api.swaggerhub.com/apis/${{ env.USERNAME }}/sample-${{ github.event.inputs.api-name }}/${{ github.event.inputs.api-version }}" \
             -H "Authorization: ${SWAGGERHUB_API_KEY}" \
             -H "Content-Type: application/json" \
