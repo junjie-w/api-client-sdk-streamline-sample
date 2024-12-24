@@ -66,24 +66,26 @@ jobs:
           EOL
 
           npx ts-node generate-spec.ts
+      
+      - name: Install SwaggerHub CLI
+        run: npm install -g swaggerhub-cli
 
       - name: Push to SwaggerHub
         run: |
           cd apps/${{ github.event.inputs.api-name }}
-          
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT \
-            "https://api.swaggerhub.com/apis/${{ env.USERNAME }}/sample-${{ github.event.inputs.api-name }}/${{ github.event.inputs.api-version }}" \
-            -H "Authorization: ${SWAGGERHUB_API_KEY}" \
-            -H "Content-Type: application/json" \
-            -d @openapi-spec.json)
-
-          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-          BODY=$(echo "$RESPONSE" | sed '$d')
-
-          if [ "$HTTP_CODE" -ne 200 ]; then
-            echo "Failed to push to SwaggerHub:"
-            echo "$BODY"
-            exit 1
+        
+          API_NAME_WITH_PREFIX="sample-${{ github.event.inputs.api-name }}"
+          API_NAME_AND_VERSION="${{ github.event.inputs.api-name }} v${{ github.event.inputs.api-version }}"
+        
+          if swaggerhub api:update ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json; then
+            echo "✨ Successfully updated $API_NAME_AND_VERSION on SwaggerHub"
+          else
+            echo "Update $API_NAME_AND_VERSION failed, trying to create..."
+            # If update fails, try to create
+            if swaggerhub api:create ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json; then
+              echo "✨ Successfully created $API_NAME_AND_VERSION on SwaggerHub"
+            else
+              echo "Failed to push $API_NAME_AND_VERSION to SwaggerHub"
+              exit 1
+            fi
           fi
-
-          echo "✨ Successfully pushed ${{ github.event.inputs.api-name }} v${{ github.event.inputs.api-version }} to SwaggerHub"
