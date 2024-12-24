@@ -81,7 +81,6 @@ jobs:
             echo "✨ Successfully updated $API_NAME_AND_VERSION on SwaggerHub"
           else
             echo "Update $API_NAME_AND_VERSION failed, trying to create..."
-            # If update fails, try to create
             if swaggerhub api:create ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json; then
               echo "✨ Successfully created $API_NAME_AND_VERSION on SwaggerHub"
             else
@@ -89,3 +88,4 @@ jobs:
               exit 1
             fi
           fi
+          
