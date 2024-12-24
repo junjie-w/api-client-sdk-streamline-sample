@@ -1,10 +1,11 @@
 import { DocumentBuilder } from '@nestjs/swagger';
 
+import { version } from '../../package.json';
+
 export const swaggerConfig = new DocumentBuilder()
-  .setTitle('Product Catalog')
-  .setDescription('Manage and retrieve product information')
-  .setVersion('1.0.0')
-  .addTag('products')
-  // Add security if needed
-  // .addBearerAuth()
+  .setTitle('Sample Products API')
+  .setDescription(
+    'Sample Products API for API client SDK workflow demonstration. Part of api-client-sdk-workflow-sample project, showcasing API to SDK pipeline.',
+  )
+  .setVersion(version)
   .build();
