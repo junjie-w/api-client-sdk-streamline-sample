@@ -1,0 +1,89 @@
+name: Push API Spec to SwaggerHub
+
+on:
+  workflow_dispatch:
+    inputs:
+      api-name:
+        type: choice
+        description: API Name
+        options: 
+          - products-api
+          - users-api
+        required: true
+      api-version:
+        description: API Version
+        required: true
+        default: 1.0.0
+
+env:
+  SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+  USERNAME: ${{ secrets.SWAGGERHUB_USERNAME }}
+
+jobs:
+  push-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: |
+          cd apps/${{ github.event.inputs.api-name }}
+          npm install
+
+      - name: Generate Spec
+        run: |
+          cd apps/${{ github.event.inputs.api-name }}
+          
+          # Create spec generator
+          cat > generate-spec.ts << 'EOL'
+          import { NestFactory } from '@nestjs/core';
+          import { SwaggerModule } from '@nestjs/swagger';
+          import { writeFileSync } from 'fs';
+          import { AppModule } from './src/app.module';
+          import { swaggerConfig } from './src/config/swagger.config';
+
+          async function generateSpec() {
+            let app;
+            try {
+              app = await NestFactory.create(AppModule);
+              const document = SwaggerModule.createDocument(app, swaggerConfig);
+              writeFileSync('openapi-spec.json', JSON.stringify(document, null, 2));
+              console.log('✨ OpenAPI spec generated successfully');
+            } catch (error) {
+              console.error('Failed to generate OpenAPI spec:', 
+                error instanceof Error ? error.message : error);
+              process.exit(1);
+            } finally {
+              if (app) await app.close();
+            }
+          }
+
+          generateSpec();
+          EOL
+
+          npx ts-node generate-spec.ts
+
+      - name: Push to SwaggerHub
+        run: |
+          cd apps/${{ github.event.inputs.api-name }}
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://api.swaggerhub.com/apis/${{ env.USERNAME }}/sample-${{ github.event.inputs.api-name }}/${{ github.event.inputs.api-version }}" \
+            -H "Authorization: ${SWAGGERHUB_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d @openapi-spec.json)
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Failed to push to SwaggerHub:"
+            echo "$BODY"
+            exit 1
+          fi
+
+          echo "✨ Successfully pushed ${{ github.event.inputs.api-name }} v${{ github.event.inputs.api-version }} to SwaggerHub"

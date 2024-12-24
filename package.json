@@ -19,7 +19,7 @@
   "engines": {
     "node": ">=18"
   },
-  "name": "with-changesets",
+  "name": "api-client-sdk-workflow-sample",
   "packageManager": "npm@10.7.0",
   "workspaces": [
     "apps/*",
