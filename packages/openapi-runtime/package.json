@@ -1,0 +1,20 @@
+{
+  "name": "@api-client-sdk-workflow-sample/openapi-runtime",
+  "version": "1.0.0",
+  "private": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@api-client-sdk-workflow-sample/tsconfig": "*"
+  }
+}

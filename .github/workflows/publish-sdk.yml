@@ -79,10 +79,10 @@ jobs:
           echo "📂 Initial project structure:"
           ls -R
      
-          jq '.dependencies["@api-client-sdk-workflow-sample/fetch-runtime"] = "1.0.0"' \
+          jq '.dependencies["@api-client-sdk-workflow-sample/openapi-runtime"] = "1.0.0"' \
           package.json > tmp.json && mv tmp.json package.json
                
-          find ./src -type f -exec sed -i "s|from '../runtime';|from '@api-client-sdk-workflow-sample/fetch-runtime';|g" {} +
+          find ./src -type f -exec sed -i "s|from '../runtime';|from '@api-client-sdk-workflow-sample/openapi-runtime';|g" {} +
      
           echo "🗑️ Removing generated runtime..."
           rm -rf ./src/runtime.ts
