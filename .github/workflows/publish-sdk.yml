@@ -1,0 +1,119 @@
+name: Generate and Publish API Client SDK Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      api-name:
+        type: choice
+        description: Select an API to generate and publish SDK package
+        options:
+          - products-api
+          - users-api
+        required: true
+      api-version:
+        description: SDK Package Version
+        required: true
+        default: '1.0.0'
+
+env:
+  SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  USERNAME: ${{ secrets.SWAGGERHUB_USERNAME }}
+  PROJECT_PREFIX: api-client-sdk-workflow-sample
+
+jobs:
+  publish-sdk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install OpenAPI Generator CLI
+        run: npm install -g @openapitools/openapi-generator-cli@2.15.3
+
+      - name: Pull Spec from SwaggerHub
+        run: |
+          API_NAME_WITH_PREFIX="sample-${{ github.event.inputs.api-name }}"
+          curl -s -H "Authorization: ${SWAGGERHUB_API_KEY}" \
+            "https://api.swaggerhub.com/apis/${USERNAME}/${API_NAME_WITH_PREFIX}-${{ github.event.inputs.api-name }}/${{ github.event.inputs.api-version }}/swagger.json" \
+            -o spec.json
+          
+          echo "📄 Preview of pulled OpenAPI spec:"
+          cat spec.json
+
+      - name: Generate SDK
+        run: |
+          PACKAGE_NAME="@${PROJECT_PREFIX}/${{ github.event.inputs.api-name }}"
+          
+          openapi-generator-cli generate \
+            -i spec.json \
+            -g typescript-fetch \
+            -o sdk \
+            --additional-properties=\
+            npmName=${PACKAGE_NAME},\
+            npmVersion=${{ github.event.inputs.api-version }},\
+            withInterfaces=true,\
+            modelPropertyNaming=original,\
+            supportsES6=true
+
+      - name: Configure package.json
+        working-directory: ./sdk
+        run: |
+          REPO_URL="https://github.com/${{ github.repository }}"
+          
+          jq --arg url "${REPO_URL}.git" \
+             --arg homepage "${REPO_URL}#readme" \
+             '.repository.url = $url 
+              | .homepage = $homepage 
+              | .publishConfig.access = "public"' \
+             package.json > tmp.json && mv tmp.json package.json
+
+      - name: Configure runtime and clean up
+        working-directory: ./sdk
+        run: |
+          echo "📂 Initial project structure:"
+          ls -R
+     
+          jq '.dependencies["@api-client-sdk-workflow-sample/openapi-runtime"] = "1.0.0"' \
+          package.json > tmp.json && mv tmp.json package.json
+               
+          find ./src -type f -exec sed -i "s|from '../runtime';|from '@api-client-sdk-workflow-sample/openapi-runtime';|g" {} +
+     
+          echo "🗑️ Removing generated runtime..."
+          rm -rf ./src/runtime.ts
+     
+          echo "📂 Final project structure after cleanup:"
+          ls -R
+
+      - name: Display package info
+        working-directory: ./sdk
+        run: |
+          echo "📦 Generated package.json:"
+          cat package.json | jq .
+
+          echo "⚙️ Generated tsconfig.json:"
+          cat tsconfig.json | jq .
+
+      - name: Build SDK
+        working-directory: ./sdk
+        run: |
+          npm install
+          npm run build
+
+      - name: Publish as NPM Package
+        working-directory: ./sdk
+        env:
+          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+        run: |
+          if [ -z "$(npm view ${PACKAGE_NAME}@${{ github.event.inputs.api-version }} version 2>/dev/null)" ]; then
+            npm publish
+            echo "✨ Successfully published ${PACKAGE_NAME}@${{ github.event.inputs.api-version }}"
+          else
+            echo "Version ${{ github.event.inputs.api-version }} already exists for ${PACKAGE_NAME}"
+            exit 1
+          fi

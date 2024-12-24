@@ -5,7 +5,7 @@ on:
     inputs:
       api-name:
         type: choice
-        description: API Name
+        description: Select an API to push spec to SwaggerHub
         options: 
           - products-api
           - users-api
@@ -27,7 +27,7 @@ jobs:
       
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
       - name: Install Dependencies
         run: |
