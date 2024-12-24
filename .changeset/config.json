@@ -5,9 +5,9 @@
   "commit": false,
   "fixed": [],
   "linked": [
-    ["@api-client-sdk-workflow-demo/products-api", "@api-client-sdk-workflow-demo/users-api"]
+    ["@api-client-sdk-workflow-sample/products-api", "@api-client-sdk-workflow-sample/users-api"]
   ],
   "access": "public",
   "updateInternalDependencies": "patch",
-  "ignore": ["@acme/docs"]
+  "ignore": []
 }
