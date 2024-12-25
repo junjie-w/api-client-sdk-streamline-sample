@@ -5,7 +5,7 @@
   "commit": false,
   "fixed": [],
   "linked": [
-    ["@api-client-sdk-workflow-sample/products-api", "@api-client-sdk-workflow-sample/users-api"]
+    ["@api-client-sdk-streamline-sample/products-api", "@api-client-sdk-streamline-sample/users-api"]
   ],
   "access": "public",
   "updateInternalDependencies": "patch",

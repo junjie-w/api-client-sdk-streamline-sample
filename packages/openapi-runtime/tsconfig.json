@@ -1,5 +1,0 @@
-{
-  "extends": "@api-client-sdk-workflow-sample/tsconfig/base.json",
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
-}
