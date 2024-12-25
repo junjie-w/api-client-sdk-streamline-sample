@@ -28,15 +28,31 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+    
+      - name: Set variables
+        id: vars
+        run: |
+          API_NAME=${{ github.event.inputs['api-name'] }}
+          API_VERSION=${{ github.event.inputs['api-version'] }}
+
+          if [ -z "$API_NAME" ] || [ -z "$API_VERSION" ]; then
+            echo "Error: Required variables not set"
+            exit 1
+          fi
+          
+          echo "API_NAME=$API_NAME" >> $GITHUB_ENV
+          echo "API_VERSION=$API_VERSION" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=@api-client-sdk-streamline-sample/${API_NAME}-client" >> $GITHUB_ENV
+          echo "Using API: $API_NAME version: $API_VERSION"
 
       - name: Install Dependencies
         run: |
-          cd apps/${{ github.event.inputs.api-name }}
+          cd apps/${{ env.API_NAME }}
           npm install
 
       - name: Generate Spec
         run: |
-          cd apps/${{ github.event.inputs.api-name }}
+          cd apps/${{ env.API_NAME }}
           
           # Create spec generator
           cat > generate-spec.ts << 'EOL'
@@ -72,16 +88,16 @@ jobs:
 
       - name: Push to SwaggerHub
         run: |
-          cd apps/${{ github.event.inputs.api-name }}
+          cd apps/${{ env.API_NAME }}
         
-          API_NAME_WITH_PREFIX="sample-${{ github.event.inputs.api-name }}"
-          API_NAME_AND_VERSION="${{ github.event.inputs.api-name }} v${{ github.event.inputs.api-version }}"
+          API_NAME_WITH_PREFIX="sample-${{ env.API_NAME }}"
+          API_NAME_AND_VERSION="${{ env.API_NAME }} v${{ env.API_VERSION }}"
         
-          if swaggerhub api:update ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json  --visibility public; then
+          if swaggerhub api:update ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ env.API_VERSION }} --file openapi-spec.json  --visibility public; then
             echo "✨ Successfully updated $API_NAME_AND_VERSION on SwaggerHub"
           else
             echo "Update $API_NAME_AND_VERSION failed, trying to create..."
-            if swaggerhub api:create ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }} --file openapi-spec.json  --visibility public; then
+            if swaggerhub api:create ${USERNAME}/${API_NAME_WITH_PREFIX}/${{ env.API_VERSION }} --file openapi-spec.json  --visibility public; then
               echo "✨ Successfully created $API_NAME_AND_VERSION on SwaggerHub"
             else
               echo "Failed to push $API_NAME_AND_VERSION to SwaggerHub"
