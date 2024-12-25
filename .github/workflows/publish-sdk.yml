@@ -34,7 +34,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install OpenAPI Generator CLI
-        run: npm install -g @openapitools/openapi-generator-cli@2.15.3
+        run: npm install -g @openapitools/openapi-generator-cli@2.7.0
 
       - name: Build Runtime Package
         run: |
@@ -98,20 +98,26 @@ jobs:
           echo "📂 Final project structure after cleanup:"
           ls -R
 
-      - name: Display package info
+      - name: Build SDK
         working-directory: ./packages/api-client-sdk
         run: |
+          npm install
+          npm run build
+
+      - name: SDK Package Preview
+        working-directory: ./packages/api-client-sdk
+        run: |
+          echo "📂 Generated directory structure:"
+          tree -a || ls -la
+
           echo "📦 Generated package.json:"
           cat package.json | jq .
 
           echo "⚙️ Generated tsconfig.json:"
           cat tsconfig.json | jq .
 
-      - name: Build SDK
-        working-directory: ./packages/api-client-sdk
-        run: |
-          npm install
-          npm run build
+          echo "\n📝 Generated tsconfig.esm.json (if exists):"
+          [ -f tsconfig.esm.json ] && cat tsconfig.esm.json | jq . || echo "No tsconfig.esm.json found"
 
       - name: Publish as NPM Package
         working-directory: ./packages/api-client-sdk
