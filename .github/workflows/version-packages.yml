@@ -38,8 +38,6 @@ jobs:
       - name: Create Version PR
         id: changesets
         uses: changesets/action@v1
-        with:
-          version: npm run version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
