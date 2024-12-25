@@ -1,5 +1,11 @@
 {
+  "name": "api-client-sdk-streamline-sample",
   "private": true,
+  "packageManager": "npm@10.7.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
@@ -18,11 +24,5 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "name": "api-client-sdk-workflow-sample",
-  "packageManager": "npm@10.7.0",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  }
 }
