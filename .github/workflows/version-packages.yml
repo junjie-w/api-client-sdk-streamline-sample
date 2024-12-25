@@ -9,7 +9,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  version:
+  version-packages:
     name: Create Version PR
     runs-on: ubuntu-latest
     steps:
@@ -26,14 +26,18 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+        
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
 
       - name: Create Version PR
         id: changesets
         uses: changesets/action@v1
         with:
           version: npm run version-packages
-          title: "chore: update package versions"
-          commit: "chore: update package versions"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -43,6 +47,6 @@ jobs:
             echo "✨ Version updates created"
             echo "Updated packages: ${{ steps.changesets.outputs.publishedPackages }}"
           else
-            echo "No version updates needed or PR created"
+            echo "No version updates needed - skipping PR creation"
           fi
           
