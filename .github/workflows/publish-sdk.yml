@@ -90,7 +90,8 @@ jobs:
              --arg homepage "${REPO_URL}#readme" \
              '.repository.url = $url 
               | .homepage = $homepage 
-              | .publishConfig.access = "public"' \
+              | .publishConfig.access = "public"
+              | .files = ["dist", "src", "*.json", "*.md"]' \
              package.json > tmp.json && mv tmp.json package.json
 
       - name: Configure runtime and clean up
@@ -133,6 +134,17 @@ jobs:
 
           echo "\n📝 Generated tsconfig.esm.json (if exists):"
           [ -f tsconfig.esm.json ] && cat tsconfig.esm.json | jq . || echo "No tsconfig.esm.json found"
+
+          echo "📄 Current .npmignore content:"
+          cat .npmignore
+          
+          sed -i '/^dist/d' .npmignore
+          
+          echo "📄 Updated .npmignore content:"
+          cat .npmignore
+
+          echo "📦 Files to be published:"
+          npm pack --dry-run
 
       - name: Publish as NPM Package
         working-directory: ./packages/api-client-sdk
