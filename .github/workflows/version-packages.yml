@@ -1,11 +1,10 @@
 name: Version Packages
 
 on:
-  workflow_run:
-    workflows: ["Build and Test"]
-    types:
-      - completed
+  push:
     branches: [main]
+    paths:
+      - '.changeset/**'
   workflow_dispatch:
 
 permissions:
