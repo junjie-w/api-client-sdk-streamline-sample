@@ -1,0 +1,54 @@
+name: Version Packages
+
+on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    types:
+      - completed
+    branches: [main]
+  workflow_dispatch:
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  version-packages:
+    name: Create Version PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
+
+      - name: Create Version PR
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: npm run version-packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print Version Status
+        run: |
+          if [[ "${{ steps.changesets.outputs.published }}" == "true" ]]; then
+            echo "✨ Version updates created"
+            echo "Updated packages: ${{ steps.changesets.outputs.publishedPackages }}"
+          else
+            echo "No version updates needed - skipping PR creation"
+          fi
+          
