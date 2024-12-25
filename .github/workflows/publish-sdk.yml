@@ -36,6 +36,14 @@ jobs:
       - name: Install OpenAPI Generator CLI
         run: npm install -g @openapitools/openapi-generator-cli@2.15.3
 
+      - name: Build Runtime Package
+        run: |
+          echo "🏗️ Building openapi-fetch-runtime package..."
+          cd packages/openapi-fetch-runtime
+          npm install
+          npm run build
+          cd ../..
+
       - name: Pull Spec from SwaggerHub
         run: |
           API_NAME_WITH_PREFIX="sample-${{ github.event.inputs.api-name }}"
