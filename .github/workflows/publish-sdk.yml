@@ -19,7 +19,6 @@ env:
   SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   USERNAME: ${{ secrets.SWAGGERHUB_USERNAME }}
-  PACKAGE_NAME: "@api-client-sdk-streamline-sample/${{ github.event.inputs.api-name }}-client"
 
 jobs:
   publish-sdk:
@@ -32,6 +31,22 @@ jobs:
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Set variables
+        id: vars
+        run: |
+          API_NAME=${{ github.event.inputs['api-name'] }}
+          API_VERSION=${{ github.event.inputs['api-version'] }}
+
+          if [ -z "$API_NAME" ] || [ -z "$API_VERSION" ]; then
+            echo "Error: Required variables not set"
+            exit 1
+          fi
+          
+          echo "API_NAME=$API_NAME" >> $GITHUB_ENV
+          echo "API_VERSION=$API_VERSION" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=@api-client-sdk-streamline-sample/${API_NAME}-client" >> $GITHUB_ENV
+          echo "Using API: $API_NAME version: $API_VERSION"
 
       - name: Install OpenAPI Generator CLI
         run: npm install -g @openapitools/openapi-generator-cli@2.7.0
@@ -46,9 +61,9 @@ jobs:
 
       - name: Pull Spec from SwaggerHub
         run: |
-          API_NAME_WITH_PREFIX="sample-${{ github.event.inputs.api-name }}"
+          API_NAME_WITH_PREFIX="sample-${{ env.API_NAME }}"
           curl -s -H "Authorization: ${SWAGGERHUB_API_KEY}" \
-            "https://api.swaggerhub.com/apis/${USERNAME}/${API_NAME_WITH_PREFIX}/${{ github.event.inputs.api-version }}/swagger.json" \
+            "https://api.swaggerhub.com/apis/${USERNAME}/${API_NAME_WITH_PREFIX}/${{ env.API_VERSION }}/swagger.json" \
             -o spec.json
           
           echo "📄 Preview of pulled OpenAPI spec:"
@@ -61,7 +76,7 @@ jobs:
             -g typescript-fetch \
             -o packages/api-client-sdk \
             --additional-properties=npmName=${{ env.PACKAGE_NAME }} \
-            --additional-properties=npmVersion=${{ github.event.inputs.api-version }} \
+            --additional-properties=npmVersion=${{ env.API_VERSION }} \
             --additional-properties=withInterfaces=true \
             --additional-properties=modelPropertyNaming=original \
             --additional-properties=supportsES6=true
@@ -122,16 +137,16 @@ jobs:
       - name: Publish as NPM Package
         working-directory: ./packages/api-client-sdk
         env:
-          NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          if [ -z "$(npm view ${{ env.PACKAGE_NAME }}@${{ github.event.inputs.api-version }} version 2>/dev/null)" ]; then
+          if [ -z "$(npm view ${{ env.PACKAGE_NAME }}@${{ env.API_VERSION }} version 2>/dev/null)" ]; then
             if npm publish; then
-              echo "✨ Successfully published ${{ env.PACKAGE_NAME }}@${{ github.event.inputs.api-version }}"
+              echo "✨ Successfully published ${{ env.PACKAGE_NAME }}@${{ env.API_VERSION }}"
             else
-              echo "Failed to publish package ${{ env.PACKAGE_NAME }}@${{ github.event.inputs.api-version }}"
+              echo "Failed to publish package ${{ env.PACKAGE_NAME }}@${{ env.API_VERSION }}"
               exit 1
             fi
           else
-            echo "Version ${{ github.event.inputs.api-version }} already exists for ${{ env.PACKAGE_NAME }}"
+            echo "Version ${{ env.API_VERSION }} already exists for ${{ env.PACKAGE_NAME }}"
             exit 1
           fi
