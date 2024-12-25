@@ -19,7 +19,7 @@ env:
   SWAGGERHUB_API_KEY: ${{ secrets.SWAGGERHUB_API_KEY }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   USERNAME: ${{ secrets.SWAGGERHUB_USERNAME }}
-  PACKAGE_NAME: "@api-client-sdk-streamline-sample/${{ github.event.inputs.api-name }}"
+  PACKAGE_NAME: "@api-client-sdk-streamline-sample/${{ github.event.inputs.api-name }}-client"
 
 jobs:
   publish-sdk:
