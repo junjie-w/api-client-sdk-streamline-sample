@@ -1,11 +1,11 @@
-name: Push API Spec to SwaggerHub
+name: 📄 Push API Spec to SwaggerHub
 
 on:
   workflow_dispatch:
     inputs:
       api-name:
         type: choice
-        description: Select an API to push spec to SwaggerHub
+        description: 📄 Select an API to push spec to SwaggerHub
         options: 
           - products-api
           - users-api
