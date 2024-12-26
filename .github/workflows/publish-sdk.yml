@@ -49,7 +49,7 @@ jobs:
           echo "Using API: $API_NAME version: $API_VERSION"
 
       - name: Install OpenAPI Generator CLI
-        run: npm install -g @openapitools/openapi-generator-cli@2.7.0
+        run: npm install -g @openapitools/openapi-generator-cli@2.15.3
 
       - name: Build Runtime Package
         run: |
@@ -125,23 +125,29 @@ jobs:
         run: |
           echo "📂 Generated directory structure:"
           tree -a || ls -la
+          echo
 
           echo "📦 Generated package.json:"
           cat package.json | jq .
+          echo
 
           echo "⚙️ Generated tsconfig.json:"
           cat tsconfig.json | jq .
+          echo
 
-          echo "\n📝 Generated tsconfig.esm.json (if exists):"
+          echo "📝 Generated tsconfig.esm.json (if exists):"
           [ -f tsconfig.esm.json ] && cat tsconfig.esm.json | jq . || echo "No tsconfig.esm.json found"
+          echo
 
           echo "📄 Current .npmignore content:"
           cat .npmignore
+          echo
           
           sed -i '/^dist/d' .npmignore
           
           echo "📄 Updated .npmignore content:"
           cat .npmignore
+          echo
 
           echo "📦 Files to be published:"
           npm pack --dry-run
