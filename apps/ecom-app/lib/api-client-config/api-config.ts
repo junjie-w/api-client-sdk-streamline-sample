@@ -1,15 +1,18 @@
 import { Configuration } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
-import { ProductsApi } from '@api-client-sdk-streamline-sample/products-api-client'
-import { UsersApi } from '@api-client-sdk-streamline-sample/users-api-client'
 import { API_CONFIG, API_TIMEOUT, type ApiName } from './globals'
+import { getApiKey } from './api-keys'
 
-const getApiConfig = (apiName: ApiName): Configuration => {
+export const getApiConfig = (apiName: ApiName): Configuration => {
   const basePath = API_CONFIG[apiName]
-  console.log(`Creating API client for ${apiName} with basePath: ${basePath}`)
-  console.log('API_CONFIG:', API_CONFIG)
+  const apiKey = getApiKey(apiName)
 
+  console.log(`Creating API client for ${apiName} with basePath: ${basePath}`)
+  
   return new Configuration({
     basePath,
+    headers: {
+      'x-api-key': apiKey
+    },
     middleware: [
       {
         pre: async (context) => {
@@ -24,8 +27,7 @@ const getApiConfig = (apiName: ApiName): Configuration => {
         post: async (context) => {
           console.log('Response received:', {
             status: context.response.status,
-            statusText: context.response.statusText,
-            headers: Object.fromEntries(context.response.headers.entries())
+            statusText: context.response.statusText
           })
           
           if (!context.response.ok) {
@@ -38,12 +40,4 @@ const getApiConfig = (apiName: ApiName): Configuration => {
       }
     ]
   })
-}
-
-export const getProductsApi = () => {
-  return new ProductsApi(getApiConfig('products-api'))
-}
-
-export const getUsersApi = () => {
-  return new UsersApi(getApiConfig('users-api'))
 }

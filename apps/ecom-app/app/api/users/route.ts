@@ -1,5 +1,5 @@
+import { getUsersApi } from '@/lib/api-client-config'
 import { NextResponse } from 'next/server'
-import { getUsersApi } from '@/lib/api-client-config/api'
 
 export async function GET() {
   try {
