@@ -60,7 +60,7 @@ jobs:
           import { SwaggerModule } from '@nestjs/swagger';
           import { writeFileSync } from 'fs';
           import { AppModule } from './src/app.module';
-          import { swaggerConfig } from './src/config/swagger.config';
+          import { swaggerConfig } from './config/swagger.config';
 
           async function generateSpec() {
             let app;
