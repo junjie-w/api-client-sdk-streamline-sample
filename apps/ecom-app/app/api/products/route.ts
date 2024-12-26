@@ -1,4 +1,4 @@
-import { getProductsApi } from '@/lib/api-client-config/api'
+import { getProductsApi } from '@/lib/api-client-config'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -10,13 +10,13 @@ export async function GET() {
     return NextResponse.json(products)
   } catch (error: any) {
     console.error('Failed to fetch products:', {
-      name: error.name,
-      message: error.message,
-      cause: error.cause,
-      stack: error.stack
+      name: error?.name,
+      message: error?.message,
+      cause: error?.cause,
+      stack: error?.stack
     })
     return NextResponse.json(
-      { error: 'Failed to fetch products', details: error.message },
+      { error: 'Failed to fetch products', details: error?.message },
       { status: 500 }
     )
   }
@@ -38,13 +38,13 @@ export async function POST() {
     return NextResponse.json(newProduct)
   } catch (error: any) {
     console.error('Failed to create product:', {
-      name: error.name,
-      message: error.message,
-      cause: error.cause,
-      stack: error.stack
+      name: error?.name,
+      message: error?.message,
+      cause: error?.cause,
+      stack: error?.stack
     })
     return NextResponse.json(
-      { error: 'Failed to create product', details: error.message },
+      { error: 'Failed to create product', details: error?.message },
       { status: 500 }
     )
   }
