@@ -1,11 +1,11 @@
-name: Publish API Client SDK Package
+name: 📦 Publish API Client SDK Package
 
 on:
   workflow_dispatch:
     inputs:
       api-name:
         type: choice
-        description: Select an API to generate and publish client SDK package
+        description: 📦 Select an API to generate and publish client SDK package
         options:
           - products-api
           - users-api
