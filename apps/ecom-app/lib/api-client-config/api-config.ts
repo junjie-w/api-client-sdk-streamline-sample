@@ -1,13 +1,18 @@
 import { Configuration } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
 import { API_CONFIG, API_TIMEOUT, type ApiName } from './globals'
 import { getApiKey } from './api-keys'
+import logger from './logger'
 
 export const getApiConfig = (apiName: ApiName): Configuration => {
   const basePath = API_CONFIG[apiName]
   const apiKey = getApiKey(apiName)
-
-  console.log(`Creating API client for ${apiName} with basePath: ${basePath}`)
   
+  logger.debug({ 
+    apiName, 
+    basePath,
+    hasApiKey: !!apiKey 
+  }, 'Creating API configuration')
+
   return new Configuration({
     basePath,
     headers: {
@@ -17,22 +22,30 @@ export const getApiConfig = (apiName: ApiName): Configuration => {
       {
         pre: async (context) => {
           context.init.signal = AbortSignal.timeout(API_TIMEOUT)
-          console.log('Outgoing request:', {
+          const headers = new Headers(context.init.headers)
+          const hasApiKey = headers.has('x-api-key')
+          logger.debug({
             url: context.url,
             method: context.init.method,
-            headers: context.init.headers
-          })
+            hasApiKey
+          }, 'Outgoing request')
           return Promise.resolve()
         },
         post: async (context) => {
-          console.log('Response received:', {
-            status: context.response.status,
-            statusText: context.response.statusText
-          })
-          
-          if (!context.response.ok) {
+          if (context.response.ok) {
+            logger.debug({
+              url: context.url,
+              status: context.response.status,
+              statusText: context.response.statusText
+            }, 'Response received successfully')
+          } else {
             const text = await context.response.text()
-            console.error('Error response body:', text)
+            logger.error({
+              url: context.url,
+              status: context.response.status,
+              statusText: context.response.statusText,
+              error: text
+            }, 'Error response received')
           }
           
           return context.response
