@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getUsersApi } from '@/lib/api-client-config'
 import logger from '@/lib/api-client-config/logger'
+import { handleApiError } from '@/lib/api-client-config/errors/handler'
 
 export async function GET() {
   try {
@@ -9,19 +10,8 @@ export async function GET() {
     const users = await usersApi.usersControllerFindAll()
     logger.debug({ users }, 'Users retrieved successfully')
     return NextResponse.json(users)
-  } catch (error: any) {
-    logger.error({
-      error: {
-        name: error?.name,
-        message: error?.message,
-        cause: error?.cause,
-        stack: error?.stack
-      }
-    }, 'Failed to fetch users')
-    return NextResponse.json(
-      { error: 'Failed to fetch users', details: error?.message },
-      { status: 500 }
-    )
+  } catch (error) {
+    return handleApiError(error)
   }
 }
 
@@ -38,18 +28,7 @@ export async function POST() {
     })
     logger.debug({ newUser }, 'User created successfully')
     return NextResponse.json(newUser)
-  } catch (error: any) {
-    logger.error({
-      error: {
-        name: error?.name,
-        message: error?.message,
-        cause: error?.cause,
-        stack: error?.stack
-      }
-    }, 'Failed to create user')
-    return NextResponse.json(
-      { error: 'Failed to create user', details: error?.message },
-      { status: 500 }
-    )
+  } catch (error) {
+    return handleApiError(error)
   }
 }
