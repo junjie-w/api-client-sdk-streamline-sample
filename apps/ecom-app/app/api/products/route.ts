@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getProductsApi } from '@/lib/api-client-config'
 import logger from '@/lib/api-client-config/logger'
+import { handleApiError } from '@/lib/api-client-config/errors/handler'
 
 export async function GET() {
   try {
@@ -9,19 +10,8 @@ export async function GET() {
     const products = await productsApi.productsControllerFindAll()
     logger.debug({ products }, 'Products retrieved successfully')
     return NextResponse.json(products)
-  } catch (error: any) {
-    logger.error({
-      error: {
-        name: error?.name,
-        message: error?.message,
-        cause: error?.cause,
-        stack: error?.stack
-      }
-    }, 'Failed to fetch products')
-    return NextResponse.json(
-      { error: 'Failed to fetch products', details: error?.message },
-      { status: 500 }
-    )
+  } catch (error) {
+    return handleApiError(error)
   }
 }
 
@@ -39,18 +29,7 @@ export async function POST() {
     })
     logger.debug({ newProduct }, 'Product created successfully')
     return NextResponse.json(newProduct)
-  } catch (error: any) {
-    logger.error({
-      error: {
-        name: error?.name,
-        message: error?.message,
-        cause: error?.cause,
-        stack: error?.stack
-      }
-    }, 'Failed to create product')
-    return NextResponse.json(
-      { error: 'Failed to create product', details: error?.message },
-      { status: 500 }
-    )
+  } catch (error) {
+    return handleApiError(error)
   }
 }
