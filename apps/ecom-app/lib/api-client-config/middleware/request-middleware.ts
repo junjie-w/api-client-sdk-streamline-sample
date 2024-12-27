@@ -1,6 +1,6 @@
 import { RequestContext } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
-import { NetworkError } from '../errors/types'
-import { API_TIMEOUT } from '../globals'
+import { API_TIMEOUT } from '../configs/globals'
+import { NetworkError } from '../errors/classes'
 import logger from '../logger'
 
 export const requestMiddleware = async (context: RequestContext) => {
@@ -18,6 +18,7 @@ export const requestMiddleware = async (context: RequestContext) => {
 
     return Promise.resolve()
   } catch (error) {
+    logger.error({ error }, 'Request middleware error')
     throw new NetworkError('Failed to prepare request', error as Error)
   }
 }

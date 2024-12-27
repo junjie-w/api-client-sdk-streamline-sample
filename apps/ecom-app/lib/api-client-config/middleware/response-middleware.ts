@@ -1,5 +1,5 @@
 import { ResponseContext, ResponseError } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
-import { TimeoutError, NetworkError } from '../errors/types'
+import { TimeoutError, NetworkError } from '../errors/classes'
 import logger from '../logger'
 
 export const responseMiddleware = async (context: ResponseContext) => {
@@ -12,7 +12,7 @@ export const responseMiddleware = async (context: ResponseContext) => {
       url: context.url,
       status: context.response.status,
       statusText: context.response.statusText
-    }, 'Response received successfully')
+    }, 'Response received')
     
     return context.response
   } catch (error) {

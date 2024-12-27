@@ -1,8 +1,8 @@
 import { Configuration, BaseAPI } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
 import { ProductsApi } from '@api-client-sdk-streamline-sample/products-api-client'
 import { UsersApi } from '@api-client-sdk-streamline-sample/users-api-client'
-import { type ApiName } from './globals'
-import { addApiClientToCache, getCachedApiClient } from './cache'
+import { type ApiName } from './configs/globals'
+import { addApiClientToCache, getCachedApiClient } from './api-cache'
 import { getApiConfig } from './api-config'
 
 /**

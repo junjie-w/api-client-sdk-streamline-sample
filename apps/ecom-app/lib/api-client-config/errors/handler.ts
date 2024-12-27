@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ResponseError } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
-import { NetworkError, TimeoutError } from './types'
+import { NetworkError, TimeoutError } from './classes'
 import logger from '../logger'
 
 export const handleApiError = async (error: unknown) => {
