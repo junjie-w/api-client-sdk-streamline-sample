@@ -1,73 +1,110 @@
-# Turborepo Design System starter with Changesets
+# API Client SDK Streamline Sample
 
-This is an official React design system starter powered by Turborepo. Versioning and package publishing is handled by [Changesets](https://github.com/changesets/changesets) and fully automated with GitHub Actions.
+A demonstration of streamlined API client SDK development, from API specification to client usage.
 
-## Using this example
+## Project Flow
 
-Run the following command:
+1. API Development
+2. Push Spec to SwaggerHub
+3. Publish SDK to NPM
+4. Use API Client Config in API Routes
 
-```sh
-npx create-turbo@latest -e with-changesets
+## Project Structure
+
+- Root
+  - apps
+    - ecom-app
+      - api (Route Handlers)
+      - lib (API Client Config)
+    - products-api
+    - users-api
+  - packages
+    - openapi-fetch-runtime
+  - workflows (GitHub Actions)
+
+## Features
+
+- 🔄 Automated API spec publishing
+- 📦 Streamlined SDK generation
+- 🛠 Centralized client configuration
+- 🌟 Type-safe API interactions
+
+## How It Works
+
+### 1. API Development
+- NestJS APIs with OpenAPI decorators
+- Automated spec generation
+- GitHub Actions workflow for spec publishing
+
+### 2. SDK Generation
+- OpenAPI Generator with customized templates
+- Automated NPM package publishing
+- Runtime package for shared utilities
+
+### 3. Client Configuration
+- Environment-based configuration 
+- Error handling and logging
+- Client instance caching
+- Request middleware
+
+### 4. API Routes
+- Type-safe API client usage
+- Proxy route implementations
+- Error handling and response mapping
+
+## Usage
+
+1. Push API Spec:
+```bash
+# Triggered via GitHub Actions
+- GitHub workflow publishes spec
 ```
 
-## What's inside?
-
-This Turborepo includes the following:
-
-### Apps and Packages
-
-- `docs`: A placeholder documentation site powered by [Next.js](https://nextjs.org/)
-- `@acme/core`: core React components
-- `@acme/utils`: shared React utilities
-- `@acme/tsconfig`: shared `tsconfig.json`s used throughout the monorepo
-- `@acme/eslint-config`: ESLint preset
-
-Each package and app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Useful commands
-
-- `yarn build` - Build all packages and the docs site
-- `yarn dev` - Develop all packages and the docs site
-- `yarn lint` - Lint all packages
-- `yarn changeset` - Generate a changeset
-- `yarn clean` - Clean up all `node_modules` and `dist` folders (runs each package's clean script)
-
-### Changing the npm organization scope
-
-The npm organization scope for this design system starter is `@acme`. To change this, it's a bit manual at the moment, but you'll need to do the following:
-
-- Rename folders in `packages/*` to replace `acme` with your desired scope
-- Search and replace `acme` with your desired scope
-- Re-run `yarn install`
-
-## Versioning and Publishing packages
-
-Package publishing has been configured using [Changesets](https://github.com/changesets/changesets). Please review their [documentation](https://github.com/changesets/changesets#documentation) to familiarize yourself with the workflow.
-
-This example comes with automated npm releases setup in a [GitHub Action](https://github.com/changesets/action). To get this working, you will need to create an `NPM_TOKEN` and `GITHUB_TOKEN` in your repository settings. You should also install the [Changesets bot](https://github.com/apps/changeset-bot) on your GitHub repository as well.
-
-For more information about this automation, refer to the official [changesets documentation](https://github.com/changesets/changesets/blob/main/docs/automating-changesets.md)
-
-### npm
-
-If you want to publish package to the public npm registry and make them publicly available, this is already setup.
-
-To publish packages to a private npm organization scope, **remove** the following from each of the `package.json`'s
-
-```diff
-- "publishConfig": {
--  "access": "public"
-- },
+2. Generate SDK:
+```bash
+# Automated via GitHub Actions
+- Pull spec from SwaggerHub
+- Generate TypeScript client
+- Publish to NPM
 ```
 
-### GitHub Package Registry
+3. Use in Routes:
+```typescript
+import { getProductsApi } from '@/lib/api-client-config'
 
-See [Working with the npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#publishing-a-package-using-publishconfig-in-the-packagejson-file)
+export async function GET() {
+  const productsApi = getProductsApi()
+  const products = await productsApi.findAll()
+  return NextResponse.json(products)
+}
+```
+
+## Links
+
+- [Products API Spec](https://app.swaggerhub.com/apis/junjie.wu/sample-products-api)
+- [Users API Spec](https://app.swaggerhub.com/apis/junjie.wu/sample-users-api)
+- [Products SDK Package](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/products-api-client)
+- [Users SDK Package](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/users-api-client)
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development servers
+npm dev
+
+# Run tests
+npm test
+
+# Build all packages
+npm build
+```
+
+## Notes
+
+While demonstrated in a monorepo, in a real-world scenario, each API might be a separate microservice, rather than being part of a monorepo. In this case, the following aspects of the demonstrated workflow would still be applicable:
+
+- SDK Distribution: The `publish-sdk.yml` workflow can be used to distribute the generated SDKs via NPM, making them accessible to client applications.
+- Reusable Client Configuration: The `api-client-config` approach can be adopted to provide a reusable client configuration, simplifying the integration process for client applications.
