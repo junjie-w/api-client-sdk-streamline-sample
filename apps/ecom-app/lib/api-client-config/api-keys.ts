@@ -1,15 +1,11 @@
+import { API_KEYS } from './constants'
 import { ApiName } from './globals'
+import logger from './logger'
 
 export const getApiKey = (apiName: ApiName): string => {
-  const apiKeys = {
-    'products-api': process.env.PRODUCTS_API_KEY,
-    'users-api': process.env.USERS_API_KEY
-  }
-  
-  const apiKey = apiKeys[apiName]
+  const apiKey = API_KEYS[apiName]
   if (!apiKey) {
-    console.warn(`No API key found for ${apiName}`)
+    logger.warn({ apiName }, 'No API key configured')
   }
-  
   return apiKey || ''
 }

@@ -1,19 +1,21 @@
 import pino from 'pino'
-import { isDevelopment } from '@/lib/utils/env'
+import { Environment, isDev, isQa } from './environment'
+import { currentEnv } from './globals'
+
+const LOG_LEVELS: Record<Environment, string> = {
+  dev: 'debug',
+  qa: 'debug',
+  prod: 'info'
+}
 
 const logger = pino({
-  level: isDevelopment() ? 'debug' : 'info',
+  level: LOG_LEVELS[currentEnv],
   browser: {
     serialize: true,
   },
-  timestamp: isDevelopment() 
+  timestamp: isDev() || isQa()
     ? () => `,"time":"${new Date().toISOString()}"` 
     : undefined,
 })
 
 export default logger
-
-// Example usage in code:
-// logger.info({ someData: 'value' }, 'Message here')
-// logger.error({ err: error }, 'Error occurred')
-// logger.debug({ config: someConfig }, 'Debug info')
