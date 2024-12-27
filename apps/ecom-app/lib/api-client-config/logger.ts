@@ -1,6 +1,6 @@
 import pino from 'pino'
-import { Environment, isDev, isQa } from './environment'
-import { currentEnv } from './globals'
+import { Environment, isDev, isQa } from './configs/environment'
+import { currentEnv } from './configs/globals'
 
 const LOG_LEVELS: Record<Environment, string> = {
   dev: 'debug',

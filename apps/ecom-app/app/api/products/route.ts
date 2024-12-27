@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { getProductsApi } from '@/lib/api-client-config'
 import logger from '@/lib/api-client-config/logger'
 import { handleApiError } from '@/lib/api-client-config/errors/handler'
+import { getProductsApi } from '@/lib/api-client-config/api-factory'
 
 export async function GET() {
   try {

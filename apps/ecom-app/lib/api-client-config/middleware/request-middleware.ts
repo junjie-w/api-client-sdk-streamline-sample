@@ -1,6 +1,6 @@
 import { RequestContext } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
-import { NetworkError } from '../errors/types'
-import { API_TIMEOUT } from '../globals'
+import { NetworkError } from '../errors/classes'
+import { API_TIMEOUT } from '../configs/globals'
 import logger from '../logger'
 
 export const requestMiddleware = async (context: RequestContext) => {

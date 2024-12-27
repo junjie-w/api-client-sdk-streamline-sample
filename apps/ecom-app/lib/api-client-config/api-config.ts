@@ -1,6 +1,5 @@
 import { Configuration } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
-import { currentEnv, getApiEndpoint, type ApiName } from './globals'
-import { getApiKey } from './api-keys'
+import { currentEnv, getApiEndpoint, getApiKey, type ApiName } from './configs/globals'
 import { createMiddleware } from './middleware'
 import logger from './logger'
 

@@ -1,5 +1,5 @@
 import { BaseAPI } from '@api-client-sdk-streamline-sample/openapi-fetch-runtime'
-import { ApiName } from './globals'
+import { ApiName } from './configs/globals'
 
 let cachedApiClients: Record<string, BaseAPI> = {}
 
@@ -9,7 +9,7 @@ let cachedApiClients: Record<string, BaseAPI> = {}
  * // Returns "products-api-ProductsApi"
  * getCacheKey('products-api', 'ProductsApi')
  */
-export const getCacheKey = (apiName: ApiName, apiClientName: string) => 
+const getCacheKey = (apiName: ApiName, apiClientName: string) => 
   `${apiName}-${apiClientName}`
 
 /**
