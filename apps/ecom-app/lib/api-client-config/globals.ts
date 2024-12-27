@@ -1,13 +1,21 @@
-export const API_SERVICES = {
-  PRODUCTS_API: process.env.NEXT_PUBLIC_PRODUCTS_API_URL || 'http://localhost:3001',
-  USERS_API: process.env.NEXT_PUBLIC_USERS_API_URL || 'http://localhost:3002'
-} as const
-
-export const API_TIMEOUT = 15000
+import { getEnvironment } from './environment'
+import { DEFAULT_DEV_PORTS, API_TIMEOUTS, API_ENDPOINTS } from './constants'
 
 export type ApiName = 'products-api' | 'users-api'
 
-export const API_CONFIG: Record<ApiName, string> = {
-  'products-api': API_SERVICES.PRODUCTS_API,
-  'users-api': API_SERVICES.USERS_API
+export const currentEnv = getEnvironment()
+
+export const API_TIMEOUT = API_TIMEOUTS[currentEnv]
+
+export const getApiEndpoint = (apiName: ApiName): string => {
+  if (currentEnv === 'dev') {
+    return `http://localhost:${DEFAULT_DEV_PORTS[apiName]}`
+  }
+
+  const endpoint = API_ENDPOINTS[apiName]
+  if (!endpoint) {
+    throw new Error(`No endpoint configured for ${apiName} in ${currentEnv} environment`)
+  }
+
+  return endpoint
 }
