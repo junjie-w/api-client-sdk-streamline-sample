@@ -1,4 +1,4 @@
-name: Version Packages
+name: Version and Release
 
 on:
   push:
@@ -16,7 +16,7 @@ permissions:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  version-packages:
+  version-and-release:
     if: "github.event.head_commit.author.name != 'github-actions[bot]'"
     name: Create Version PR
     runs-on: ubuntu-latest
@@ -56,3 +56,17 @@ jobs:
             echo "No version updates needed - skipping PR creation"
           fi
           
+      - name: Create Releases for Updated Packages
+        if: steps.changesets.outputs.hasChangesets == 'true'
+        run: |
+          echo '${{ steps.changesets.outputs.publishedPackages }}' | jq -c '.[]' | while read -r pkg; do
+            name=$(echo $pkg | jq -r '.name')
+            version=$(echo $pkg | jq -r '.version')
+            
+            echo "Creating release for $name v$version"
+
+            gh workflow run release-template.yml \
+              -f package-name="$name" \
+              -f version="$version" \
+              -f type="api"
+          done
