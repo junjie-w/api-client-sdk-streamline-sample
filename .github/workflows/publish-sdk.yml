@@ -168,6 +168,13 @@ jobs:
           echo "📦 Files to be published:"
           npm pack --dry-run
 
+      - name: Create SDK Release
+        uses: ./.github/workflows/release-template.yml
+        with:
+          package-name: ${{ env.PACKAGE_NAME }}
+          version: ${{ env.API_VERSION }}
+          type: sdk
+
       - name: Publish as NPM Package
         working-directory: ./packages/api-client-sdk
         env:
