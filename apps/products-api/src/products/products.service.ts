@@ -1,10 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
 
 @Injectable()
-export class ProductsService {
-  private readonly products: Product[] = [];
+export class ProductsService implements OnModuleInit {
+  private products: Product[] = [];
+
+  onModuleInit() {
+    this.addDefaultProduct();
+  }
+
+  private addDefaultProduct() {
+    const defaultProduct: CreateProductDto = {
+      name: 'Mechanical Keyboard',
+      price: 159.99,
+      description: 'Premium mechanical keyboard with RGB lighting',
+      categories: ['electronics', 'accessories'],
+    };
+
+    this.create(defaultProduct);
+  }
 
   create(createProductDto: CreateProductDto): Product {
     const product = {

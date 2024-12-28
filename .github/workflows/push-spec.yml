@@ -5,7 +5,7 @@ on:
     inputs:
       api-name:
         type: choice
-        description: Select an API to push spec to SwaggerHub
+        description: 🔖 Select an API to push spec to SwaggerHub
         options: 
           - products-api
           - users-api
