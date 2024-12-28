@@ -18,7 +18,10 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new product' })
+  @ApiOperation({
+    operationId: 'createProduct',
+    summary: 'Create a new product',
+  })
   @ApiResponse({
     status: 201,
     description: 'Product created successfully',
@@ -33,7 +36,7 @@ export class ProductsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all products' })
+  @ApiOperation({ operationId: 'getAllProducts', summary: 'Get all products' })
   @ApiQuery({ name: 'category', required: false })
   @ApiResponse({
     status: 200,
@@ -49,7 +52,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get product by ID' })
+  @ApiOperation({ operationId: 'getProduct', summary: 'Get product by ID' })
   @ApiResponse({
     status: 200,
     description: 'Product found',

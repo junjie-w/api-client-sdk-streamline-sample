@@ -1,10 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
-export class UsersService {
-  private readonly users: User[] = [];
+export class UsersService implements OnModuleInit {
+  private users: User[] = [];
+
+  onModuleInit() {
+    this.addDefaultUser();
+  }
+
+  private addDefaultUser() {
+    const defaultUser: CreateUserDto = {
+      name: 'Jane Smith',
+      email: 'jane@example.com',
+      phone: '111-111-1111',
+    };
+    this.create(defaultUser);
+  }
 
   create(createUserDto: CreateUserDto): User {
     const user = {

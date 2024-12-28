@@ -5,7 +5,7 @@ on:
     inputs:
       api-name:
         type: choice
-        description: Select an API to generate and publish client SDK package
+        description: 🧳 Select an API to generate and publish client SDK package
         options:
           - products-api
           - users-api

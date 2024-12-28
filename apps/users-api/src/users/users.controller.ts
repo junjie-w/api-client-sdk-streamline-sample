@@ -17,7 +17,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ operationId: 'createUser', summary: 'Create a new user' })
   @ApiResponse({
     status: 201,
     description: 'User created successfully',
@@ -28,7 +28,7 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
+  @ApiOperation({ operationId: 'getAllUsers', summary: 'Get all users' })
   @ApiResponse({
     status: 200,
     description: 'List of users',
@@ -43,7 +43,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiOperation({ operationId: 'getUser', summary: 'Get user by ID' })
   @ApiResponse({
     status: 200,
     description: 'User found',
