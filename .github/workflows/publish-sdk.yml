@@ -5,7 +5,7 @@ on:
     inputs:
       api-name:
         type: choice
-        description: 📦 Select an API to generate and publish client SDK package
+        description: Select an API to generate and publish client SDK package
         options:
           - products-api
           - users-api
@@ -37,6 +37,7 @@ jobs:
         run: |
           API_NAME=${{ github.event.inputs['api-name'] }}
           API_VERSION=${{ github.event.inputs['api-version'] }}
+          API_DISPLAY_NAME="$(echo ${API_NAME//-/ } | sed 's/\b\(.\)/\u\1/g')"
 
           if [ -z "$API_NAME" ] || [ -z "$API_VERSION" ]; then
             echo "Error: Required variables not set"
@@ -45,6 +46,7 @@ jobs:
           
           echo "API_NAME=$API_NAME" >> $GITHUB_ENV
           echo "API_VERSION=$API_VERSION" >> $GITHUB_ENV
+          echo "API_DISPLAY_NAME=$API_DISPLAY_NAME" >> $GITHUB_ENV
           echo "PACKAGE_NAME=@api-client-sdk-streamline-sample/${API_NAME}-client" >> $GITHUB_ENV
           echo "Using API: $API_NAME version: $API_VERSION"
 
@@ -79,7 +81,8 @@ jobs:
             --additional-properties=npmVersion=${{ env.API_VERSION }} \
             --additional-properties=withInterfaces=true \
             --additional-properties=modelPropertyNaming=original \
-            --additional-properties=supportsES6=true
+            --additional-properties=supportsES6=true \
+            --additional-properties=description="OpenAPI client for @api-client-sdk-streamline-sample | ${{env.API_DISPLAY_NAME}}. Part of api-client-sdk-streamline-sample project."
 
       - name: Configure package.json
         working-directory: ./packages/api-client-sdk
@@ -93,6 +96,19 @@ jobs:
               | .publishConfig.access = "public"
               | .files = ["dist", "src", "*.json", "*.md"]' \
              package.json > tmp.json && mv tmp.json package.json
+      
+      - name: Add SwaggerHub link to README.md
+        working-directory: ./packages/api-client-sdk
+        run: |
+          API_NAME_WITH_PREFIX="sample-${{ env.API_NAME }}"
+          SWAGGER_URL="https://app.swaggerhub.com/apis/${USERNAME}/${API_NAME_WITH_PREFIX}/${{ env.API_VERSION }}"
+          REPO_URL="https://github.com/${{ github.repository }}"
+          
+          echo "Part of [api-client-sdk-streamline-sample](${REPO_URL}), a project demonstrating streamlined API client SDK development workflow.\n" > temp_readme
+          echo "The OpenAPI specification for this client SDK is available on SwaggerHub: [@api-client-sdk-streamline-sample | ${{env.API_DISPLAY_NAME}}](${SWAGGER_URL}).\n" >> temp_readme
+          echo "---\n" >> temp_readme
+          cat README.md >> temp_readme
+          mv temp_readme README.md
 
       - name: Configure runtime and clean up
         working-directory: ./packages/api-client-sdk

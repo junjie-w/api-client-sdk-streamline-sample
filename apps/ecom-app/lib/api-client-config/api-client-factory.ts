@@ -2,8 +2,8 @@ import { Configuration, BaseAPI } from '@api-client-sdk-streamline-sample/openap
 import { ProductsApi } from '@api-client-sdk-streamline-sample/products-api-client'
 import { UsersApi } from '@api-client-sdk-streamline-sample/users-api-client'
 import { type ApiName } from './configs/globals'
-import { addApiClientToCache, getCachedApiClient } from './api-cache'
-import { getApiConfig } from './api-config'
+import { addApiClientToCache, getCachedApiClient } from './api-client-cache'
+import { getApiConfig } from './api-client-config'
 
 /**
  * Generic function to get or create an API client
