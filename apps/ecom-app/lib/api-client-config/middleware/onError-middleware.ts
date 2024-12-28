@@ -1,7 +1,7 @@
 import { ErrorContext } from "@api-client-sdk-streamline-sample/openapi-fetch-runtime"
 import logger from "../logger"
 
-export const errorMiddleware = async (context: ErrorContext) => {
+export const onErrorMiddleware = async (context: ErrorContext) => {
   logger.error({
     url: context.url,
     error: context.error instanceof Error ? {
