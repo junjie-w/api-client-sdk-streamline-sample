@@ -28,6 +28,7 @@ A demonstration of streamlined API client SDK development, from API specificatio
 - 📦 Streamlined SDK generation
 - 🛠 Centralized client configuration
 - 🌟 Type-safe API interactions
+- 🔖 Versioning with Changesets
 
 ## How It Works
 

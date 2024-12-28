@@ -43,6 +43,9 @@ export const getCachedApiClient = <T extends BaseAPI>(
   return cachedApiClients[cacheKey] as T | undefined
 }
 
+/**
+ * Utility function to clear cache if needed
+ */
 export const clearApiClientCache = () => {
   cachedApiClients = {}
 }
