@@ -36,7 +36,7 @@ root (turbo monorepo)
 │       ├── push-spec.yml             # Pushes OpenAPI specs to SwaggerHub
 │       ├── publish-sdk.yml           # Generates & Releases & publishes API Client SDKs
 │       ├── version-release.yml       # Handles versioning with changesets
-│       └── release-template.yml      # Base release workflow template
+│       └── release-base.yml          # Reusable release workflow
 │           
 ├── package.json
 └── turbo.json                        # Turborepo config
