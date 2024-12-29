@@ -61,6 +61,8 @@ jobs:
           fi
 
       - name: Create Releases for Updated Packages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.changesets.outputs.hasChangesets == 'true'
         run: |
           for changeset in .changeset/*.md; do
