@@ -34,7 +34,9 @@ jobs:
           API_BASE="${BASE_NAME%-client}"
           
           DISPLAY_NAME="$(echo "${API_BASE%%-*}" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}') API"
-          
+
+          TAG_NAME="${BASE_NAME}-v${{ inputs.version }}"
+
           SWAGGER_URL="https://app.swaggerhub.com/apis/junjie.wu/sample-${API_BASE}/${{ inputs.version }}"
           
           if [[ "${{ inputs.type }}" == "api" ]]; then
@@ -59,6 +61,6 @@ jobs:
             📄 [@api-client-sdk-streamline-sample | ${DISPLAY_NAME}](${SWAGGER_URL})"
           fi
 
-          gh release create "v${{ inputs.version }}" \
+          gh release create "$TAG_NAME" \
             --title "${{ inputs.package-name }} v${{ inputs.version }}" \
             --notes "$NOTES"
