@@ -176,6 +176,8 @@ jobs:
           npm pack --dry-run
 
       - name: Create SDK Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh workflow run release-base.yml \
             -f package-name="${{ env.PACKAGE_NAME }}" \
