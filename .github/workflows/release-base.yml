@@ -18,9 +18,12 @@ on:
         enum: [api, sdk]
 
 jobs:
-  release:
+  create-release:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
