@@ -1,0 +1,57 @@
+name: Create Release
+
+on:
+  workflow_call:
+    inputs:
+      package-name:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      type:
+        required: true
+        type: string
+        enum: [api, sdk]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_NAME="${{ inputs.package-name }}"
+          
+          BASE_NAME="${RELEASE_NAME#@api-client-sdk-streamline-sample/}"
+          API_BASE="${BASE_NAME%-client}"
+          
+          DISPLAY_NAME="$(echo "${API_BASE%-api}" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}') API"
+          
+          SWAGGER_URL="https://app.swaggerhub.com/apis/junjie.wu/sample-${API_BASE}/${{ inputs.version }}"
+          
+          if [[ "${{ inputs.type }}" == "api" ]]; then
+            NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}
+
+            This API version is ready for:
+            - OpenAPI specification pushing to SwaggerHub
+            - Client SDK package generation
+            
+            After pushing the spec, it will be available at:
+            📄 [@api-client-sdk-streamline-sample | ${DISPLAY_NAME}](${SWAGGER_URL})
+            
+            After SDK generation, the NPM package will be available at:
+            📦 [@api-client-sdk-streamline-sample/${API_BASE}-client](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/${API_BASE}-client)"
+          else
+            NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}
+
+            📦 NPM Package: [${{ inputs.package-name }}](https://www.npmjs.com/package/${{ inputs.package-name }})
+            
+            Generated SDK package from the corresponding OpenAPI specification:
+            📄 [@api-client-sdk-streamline-sample | ${DISPLAY_NAME}](${SWAGGER_URL})"
+          fi
+
+          gh release create "v${{ inputs.version }}" \
+            --title "${{ inputs.package-name }} v${{ inputs.version }}" \
+            --notes "$NOTES"
