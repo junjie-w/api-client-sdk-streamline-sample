@@ -1,17 +1,20 @@
 name: Create Release
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       package-name:
-        required: true
         type: string
+        description: Package name
+        required: true
       version:
-        required: true
         type: string
+        description: Package version
+        required: true
       type:
-        required: true
         type: string
+        description: Package type (api or sdk)
+        required: false
         enum: [api, sdk]
 
 jobs:
@@ -43,7 +46,7 @@ jobs:
             
             After SDK generation, the NPM package will be available at:
             📦 [@api-client-sdk-streamline-sample/${API_BASE}-client](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/${API_BASE}-client)"
-          else
+          elif [[ "${{ inputs.type }}" == "sdk" ]]; then
             NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}
 
             📦 NPM Package: [${{ inputs.package-name }}](https://www.npmjs.com/package/${{ inputs.package-name }})
