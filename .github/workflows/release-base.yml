@@ -33,7 +33,7 @@ jobs:
           BASE_NAME="${RELEASE_NAME#@api-client-sdk-streamline-sample/}"
           API_BASE="${BASE_NAME%-client}"
           
-          DISPLAY_NAME="$(echo "${API_BASE%-api}" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}') API"
+          DISPLAY_NAME="$(echo "${API_BASE%%-*}" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}') API"
           
           SWAGGER_URL="https://app.swaggerhub.com/apis/junjie.wu/sample-${API_BASE}/${{ inputs.version }}"
           
@@ -41,20 +41,21 @@ jobs:
             NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}
 
             This API version is ready for:
-            - OpenAPI specification pushing to SwaggerHub
-            - Client SDK package generation
+            - Pushing the OpenAPI specification to SwaggerHub
+            - Generating and publishing the client SDK package
             
-            After pushing the spec, it will be available at:
+            After pushing the specification, it will be available at:
             📄 [@api-client-sdk-streamline-sample | ${DISPLAY_NAME}](${SWAGGER_URL})
             
-            After SDK generation, the NPM package will be available at:
+            After generating and publishing the SDK, the NPM package will be available at:
             📦 [@api-client-sdk-streamline-sample/${API_BASE}-client](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/${API_BASE}-client)"
           elif [[ "${{ inputs.type }}" == "sdk" ]]; then
             NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}
 
-            📦 NPM Package: [${{ inputs.package-name }}](https://www.npmjs.com/package/${{ inputs.package-name }})
+            NPM Package: 
+            📦 [${{ inputs.package-name }}](https://www.npmjs.com/package/${{ inputs.package-name }})
             
-            Generated SDK package from the corresponding OpenAPI specification:
+            Generated from the corresponding OpenAPI specification:
             📄 [@api-client-sdk-streamline-sample | ${DISPLAY_NAME}](${SWAGGER_URL})"
           fi
 
