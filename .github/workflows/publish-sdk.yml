@@ -176,11 +176,11 @@ jobs:
           npm pack --dry-run
 
       - name: Create SDK Release
-        uses: ./.github/workflows/release-template.yml
-        with:
-          package-name: ${{ env.PACKAGE_NAME }}
-          version: ${{ env.API_VERSION }}
-          type: sdk
+        run: |
+          gh workflow run release-base.yml \
+            -f package-name="${{ env.PACKAGE_NAME }}" \
+            -f version="${{ env.API_VERSION }}" \
+            -f type="sdk"
 
       - name: Publish as NPM Package
         working-directory: ./packages/api-client-sdk
