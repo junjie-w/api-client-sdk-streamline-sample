@@ -73,6 +73,8 @@ jobs:
 
       - name: Generate SDK
         run: |          
+          DESCRIPTION="OpenAPI client for @api-client-sdk-streamline-sample | ${{env.API_DISPLAY_NAME}}. Part of api-client-sdk-streamline-sample project."
+
           openapi-generator-cli generate \
             -i spec.json \
             -g typescript-fetch \
@@ -82,7 +84,7 @@ jobs:
             --additional-properties=withInterfaces=true \
             --additional-properties=modelPropertyNaming=original \
             --additional-properties=supportsES6=true \
-            --additional-properties=description="OpenAPI client for @api-client-sdk-streamline-sample | ${{env.API_DISPLAY_NAME}}. Part of api-client-sdk-streamline-sample project."
+            --additional-properties="description=$DESCRIPTION"
 
       - name: Configure package.json
         working-directory: ./packages/api-client-sdk
