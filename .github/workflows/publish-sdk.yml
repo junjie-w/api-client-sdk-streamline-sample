@@ -37,7 +37,7 @@ jobs:
         run: |
           API_NAME=${{ github.event.inputs['api-name'] }}
           API_VERSION=${{ github.event.inputs['api-version'] }}
-          API_DISPLAY_NAME="$(echo ${API_NAME//-/ } | sed 's/\b\(.\)/\u\1/g')"
+          API_DISPLAY_NAME="$(echo ${API_NAME%-api} | sed 's/./\u&/1') API"
 
           if [ -z "$API_NAME" ] || [ -z "$API_VERSION" ]; then
             echo "Error: Required variables not set"
@@ -47,6 +47,7 @@ jobs:
           echo "API_NAME=$API_NAME" >> $GITHUB_ENV
           echo "API_VERSION=$API_VERSION" >> $GITHUB_ENV
           echo "API_DISPLAY_NAME=$API_DISPLAY_NAME" >> $GITHUB_ENV
+          echo "API_PACKAGE_NAME=@api-client-sdk-streamline-sample/${API_NAME}" >> $GITHUB_ENV
           echo "PACKAGE_NAME=@api-client-sdk-streamline-sample/${API_NAME}-client" >> $GITHUB_ENV
           echo "Using API: $API_NAME version: $API_VERSION"
 
@@ -73,8 +74,6 @@ jobs:
 
       - name: Generate SDK
         run: |          
-          DESCRIPTION="OpenAPI client for @api-client-sdk-streamline-sample | ${{env.API_DISPLAY_NAME}}. Part of api-client-sdk-streamline-sample project."
-
           openapi-generator-cli generate \
             -i spec.json \
             -g typescript-fetch \
@@ -84,16 +83,18 @@ jobs:
             --additional-properties=withInterfaces=true \
             --additional-properties=modelPropertyNaming=original \
             --additional-properties=supportsES6=true \
-            --additional-properties="description=$DESCRIPTION"
 
       - name: Configure package.json
         working-directory: ./packages/api-client-sdk
         run: |
           REPO_URL="https://github.com/${{ github.repository }}"
+          DESCRIPTION="OpenAPI client for ${{ env.API_PACKAGE_NAME }}. Part of api-client-sdk-streamline-sample project."
           
           jq --arg url "${REPO_URL}.git" \
              --arg homepage "${REPO_URL}#readme" \
-             '.repository.url = $url 
+             --arg desc "$DESCRIPTION" \
+             '.description = $desc 
+              | .repository.url = $url 
               | .homepage = $homepage 
               | .publishConfig.access = "public"
               | .files = ["dist", "src", "*.json", "*.md"]' \
@@ -103,7 +104,7 @@ jobs:
         working-directory: ./packages/api-client-sdk
         run: |
           API_NAME_WITH_PREFIX="sample-${{ env.API_NAME }}"
-          SWAGGER_URL="https://app.swaggerhub.com/apis/${USERNAME}/${API_NAME_WITH_PREFIX}/${{ env.API_VERSION }}"
+          SWAGGER_URL="https://app.swaggerhub.com/apis/${USERNAME}/${API_NAME_WITH_PREFIX}"
           REPO_URL="https://github.com/${{ github.repository }}"
           
           echo "Part of [api-client-sdk-streamline-sample](${REPO_URL}), a project demonstrating streamlined API client SDK development workflow.\n" > temp_readme
@@ -155,6 +156,10 @@ jobs:
 
           echo "📝 Generated tsconfig.esm.json (if exists):"
           [ -f tsconfig.esm.json ] && cat tsconfig.esm.json | jq . || echo "No tsconfig.esm.json found"
+          echo
+
+          echo "📄 Generated README.md:"
+          cat README.md
           echo
 
           echo "📄 Current .npmignore content:"
