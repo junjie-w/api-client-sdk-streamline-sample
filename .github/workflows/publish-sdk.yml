@@ -107,9 +107,7 @@ jobs:
           SWAGGER_URL="https://app.swaggerhub.com/apis/${USERNAME}/${API_NAME_WITH_PREFIX}"
           REPO_URL="https://github.com/${{ github.repository }}"
           
-          echo "Part of [api-client-sdk-streamline-sample](${REPO_URL}), a project demonstrating streamlined API client SDK development workflow.\n" > temp_readme
-          echo "The OpenAPI specification for this client SDK is available on SwaggerHub: [@api-client-sdk-streamline-sample | ${{env.API_DISPLAY_NAME}}](${SWAGGER_URL}).\n" >> temp_readme
-          echo "---\n" >> temp_readme
+          echo "Part of [api-client-sdk-streamline-sample](${REPO_URL}), a project demonstrating streamlined API client SDK development workflow. The OpenAPI specification for this client SDK is available on SwaggerHub: [@api-client-sdk-streamline-sample | ${{env.API_DISPLAY_NAME}}](${SWAGGER_URL})." > temp_readme
           cat README.md >> temp_readme
           mv temp_readme README.md
 
