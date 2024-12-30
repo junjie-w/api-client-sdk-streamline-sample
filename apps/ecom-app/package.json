@@ -8,8 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@api-client-sdk-streamline-sample/products-api-client": "^1.0.2",
-    "@api-client-sdk-streamline-sample/users-api-client": "^1.0.2",
+    "@api-client-sdk-streamline-sample/products-api-client": "^1.1.0",
+    "@api-client-sdk-streamline-sample/users-api-client": "^1.1.0",
     "next": "15.1.2",
     "pino": "^9.6.0",
     "react": "^19.0.0",

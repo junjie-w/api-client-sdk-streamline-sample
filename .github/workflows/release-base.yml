@@ -46,7 +46,7 @@ jobs:
             - Pushing the OpenAPI specification to SwaggerHub
             - Generating and publishing the client SDK package
             
-            After pushing the specification, it will be available at:
+            After pushing to SwaggerHub, the API specification will be available at:
             📄 [@api-client-sdk-streamline-sample | ${DISPLAY_NAME}](${SWAGGER_URL})
             
             After generating and publishing the SDK, the NPM package will be available at:
