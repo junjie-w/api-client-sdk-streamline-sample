@@ -52,7 +52,7 @@ jobs:
             echo "✨ Version updates created"
             for changeset in .changeset/*.md; do
               if [ -f "$changeset" ]; then
-                pkg_info=$(grep -A 1 "---" "$changeset")
+                pkg_info=$(grep -A 1 -e "---" "$changeset")
                 echo "$pkg_info"
               fi
             done
@@ -67,8 +67,8 @@ jobs:
         run: |
           for changeset in .changeset/*.md; do
             if [ -f "$changeset" ]; then
-              name=$(grep -A 1 "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | tr -d '"' | awk '{print $1}')
-              version=$(grep -A 1 "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | awk '{print $2}')
+              name=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | tr -d '"' | awk '{print $1}')
+              version=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | awk '{print $2}')
               
               if [ ! -z "$name" ]; then
                 echo "Creating release for $name v$version"
