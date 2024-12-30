@@ -4,9 +4,7 @@
   "baseBranch": "main",
   "commit": false,
   "fixed": [],
-  "linked": [
-    ["@api-client-sdk-streamline-sample/products-api", "@api-client-sdk-streamline-sample/users-api"]
-  ],
+  "linked": [],
   "access": "public",
   "updateInternalDependencies": "patch",
   "ignore": []

@@ -118,13 +118,16 @@ jobs:
           echo "📂 Initial project structure:"
           ls -R
      
-          jq '.dependencies["@api-client-sdk-streamline-sample/openapi-fetch-runtime"] = "^1.0.0"' \
+          jq '.dependencies["@api-client-sdk-streamline-sample/openapi-fetch-runtime"] = "^1.0.1"' \
             package.json > tmp.json && mv tmp.json package.json
           
           find ./src/apis -type f -exec sed -i "s|from '../runtime';|from '@api-client-sdk-streamline-sample/openapi-fetch-runtime';|g" {} +
           find ./src/models -type f -exec sed -i "s|from '../runtime';|from '@api-client-sdk-streamline-sample/openapi-fetch-runtime';|g" {} +
           
           sed -i "/export \* from '\.\/runtime';/d" ./src/index.ts
+          
+          echo "📄 Contents of runtime.ts:"
+          cat ./src/runtime.ts
           
           echo "🗑️ Removing generated runtime..."
           rm -rf ./src/runtime.ts

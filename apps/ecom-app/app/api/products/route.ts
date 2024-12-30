@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     
     const body = await request.json()
     const newProduct = await productsApi.createProduct({
-      createProductDto: body
+        createProductDto: body
     })
     
     logger.debug({ newProduct }, 'Product created successfully')
