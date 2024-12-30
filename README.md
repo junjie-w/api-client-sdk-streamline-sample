@@ -86,7 +86,7 @@ npm run dev              # products: 3001, users: 3002
 # Products API: http://localhost:3001/api-docs
 # Users API:    http://localhost:3002/api-docs
 
-# 3. Test All Endpoints: Run Test Script with Sample Data
+# 3. Run Test Script with Sample Data
 npm run demo             # Executes try-{service}-api.sh
 # products-api → try-products-api.sh
 # users-api   → try-users-api.sh
@@ -121,7 +121,7 @@ Then, OpenAPI specs are generated and pushed to SwaggerHub:
 ![workflow-title-push-spec](./assets/docs/workflow-title-push-spec.png)
 ![workflow-detail-push-spec](./assets/docs/workflow-detail-push-sepc.png)
 
-Once published, specs are available on SwaggerHub:
+Once published, API specs are available on SwaggerHub:
 - 📄 [@api-client-sdk-streamline-sample | Products API](https://app.swaggerhub.com/apis/junjie.wu/sample-products-api)
 - 📄 [@api-client-sdk-streamline-sample | Users API](https://app.swaggerhub.com/apis/junjie.wu/sample-users-api)
 
@@ -142,7 +142,7 @@ packages/
 ![workflow-title-publish-sdk](./assets/docs/workflow-title-publish-sdk.png)
 ![workflow-detail-publish-sdk](./assets/docs/workflow-detail-publish-sdk.png)
 
-Published SDK packages:
+Once published, SDK packages are available on NPM:
 - 🧳 [@api-client-sdk-streamline-sample/products-api-client](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/products-api-client)
 - 🧳 [@api-client-sdk-streamline-sample/users-api-client](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/users-api-client)
 
@@ -172,7 +172,7 @@ apps/ecom-app/
     └── api-client-config/      # API client configuration
 ```
 
-Client Configuration Structure:
+API Client Configuration Structure:
 
 ```bash
 api-client-config/
@@ -180,7 +180,7 @@ api-client-config/
 ├── middlewares/                 # Request & Response & onError middlewares
 ├── errors/                      # Error handling & types
 ├── api-client-cache.ts          # Client instance caching
-├── api-client-config.ts         # Base client configuration
+├── api-client-config.ts         # API configuration builder
 ├── api-client-factory.ts        # Factory pattern for client creation
 └── logger.ts                    # Logging utilities
 ```
