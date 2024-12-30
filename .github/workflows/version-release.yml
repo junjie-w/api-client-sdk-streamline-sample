@@ -53,8 +53,7 @@ jobs:
             shopt -s nullglob
             for changeset in .changeset/*.md; do
               if [ -f "$changeset" ]; then
-                pkg_info=$(grep -A 1 -e "---" "$changeset" || true)
-                [ ! -z "$pkg_info" ] && echo "$pkg_info"
+                awk '/^---$/{p=1;next}/^---$/{p=0}p' "$changeset"
               fi
             done
           else
@@ -69,15 +68,17 @@ jobs:
           shopt -s nullglob
           for changeset in .changeset/*.md; do
             if [ -f "$changeset" ]; then
-              name=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | tr -d '"' | awk '{print $1}' || true)
-              version=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | awk '{print $2}' || true)
-              
-              if [ ! -z "$name" ] && [ ! -z "$version" ]; then
-                echo "Creating release for $name v$version"
-                gh workflow run release-base.yml \
-                  -f package-name="$name" \
-                  -f version="$version" \
-                  -f type="api"
-              fi
+              while read -r package_line; do
+                if [[ $package_line == \"@api-client-sdk-streamline-sample/* ]]; then
+                  name=$(echo "$package_line" | cut -d'"' -f2)
+                  version=$(echo "$package_line" | awk '{print $2}')
+                  
+                  echo "Creating release for $name v$version"
+                  gh workflow run release-base.yml \
+                    -f package-name="$name" \
+                    -f version="$version" \
+                    -f type="api"
+                fi
+              done < <(awk '/^---$/{p=1;next}/^---$/{p=0}p' "$changeset" | grep -v '^---$')
             fi
           done
