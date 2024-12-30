@@ -1,5 +1,11 @@
 # @api-client-sdk-streamline-sample/products-api
 
+## 1.1.1
+
+### Patch Changes
+
+- c0e1fc3: update api controllers
+
 ## 1.1.0
 
 ### Minor Changes
