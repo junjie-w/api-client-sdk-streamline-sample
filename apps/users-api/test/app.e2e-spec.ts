@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
 describe('API endpoints (e2e)', () => {
@@ -42,7 +42,7 @@ describe('API endpoints (e2e)', () => {
     const testUser = {
       name: 'John Doe',
       email: 'john@example.com',
-      phone: '+1234567890'
+      phone: '+1234567890',
     };
 
     it('/users (POST)', () => {
@@ -71,19 +71,17 @@ describe('API endpoints (e2e)', () => {
 
     it('/users/:id (GET)', () => {
       return request(app.getHttpServer())
-        .get('/users/1')
+        .get('/users/2')
         .expect(200)
         .expect((res) => {
-          expect(res.body.id).toBe(1);
+          expect(res.body.id).toBe(2);
           expect(res.body.name).toBe(testUser.name);
           expect(res.body.email).toBe(testUser.email);
         });
     });
 
     it('/users/:id (GET) - Not Found', () => {
-      return request(app.getHttpServer())
-        .get('/users/999')
-        .expect(404);
+      return request(app.getHttpServer()).get('/users/999').expect(404);
     });
   });
 
