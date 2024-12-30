@@ -13,38 +13,44 @@ A project demonstrating streamlined API client SDK development workflow - from O
 ```
 root (turbo monorepo)
 ├── apps/
-│   ├── products-api/                 # Product API service (NestJS)
-│   ├── users-api/                    # User API service (NestJS)
-│   └── ecom-app/                     # Demo web app (Next.js)
+│   ├── products-api/                      # Product API service (NestJS)
+│   ├── users-api/                         # User API service (NestJS)
+│   └── ecom-app/                          # Demo web app (Next.js)
 │       ├── app/
 │       │   └── api/
 │       │       ├── products/
-│       │       │   └── route.ts      # Products API route
+│       │       │   ├── route.ts
+│       │       │   └── [id]/
+│       │       │       └── route.ts
 │       │       └── users/
-│       │           └── route.ts      # Users API route
+│       │           ├── route.ts
+│       │           └── [id]/
+│       │               └── route.ts
 │       └── lib/
-│           └── api-client-config/    # SDK configuration
+│           └── api-client-config/         # API client configuration
 │
 ├── packages/
-│   └── openapi-fetch-runtime/        # Shared runtime utilities
+│   └── openapi-fetch-runtime/             # Shared fetch runtime for generated SDKs
 │
-├── .changeset/                       # Changesets for versioning
-│   └── config.json                   # Changesets configuration
+├── .changeset/                            # Changesets for versioning
+│   └── config.json
 │
 ├── .github/
 │   └── workflows/
-│       ├── push-spec.yml             # Pushes OpenAPI specs to SwaggerHub
-│       ├── publish-sdk.yml           # Generates & Releases & publishes API Client SDKs
-│       ├── version-release.yml       # Handles versioning with changesets
-│       └── release-base.yml          # Reusable release workflow
+│       ├── version-release.yml            # Version & Release NestJS APIs
+│       ├── push-spec.yml                  # Push API specs to SwaggerHub
+│       ├── publish-sdk.yml                # Generate & Release & Publish SDK packages
+│       └── release-base.yml               # Shared release workflow
 │           
 ├── package.json
-└── turbo.json                        # Turborepo config
+└── turbo.json                             # Turborepo config
 ```
 
 ## 👀 A Closer Look
 
 ### 1. 🏗️ API Development
+
+> 👻 NestJS + Swagger decorators automatically generate clean OpenAPI specs, which will be used later for SDK generation. The `operationId` in decorators maps directly to SDK method names.
 
 Two NestJS services that auto-generate OpenAPI specs using Swagger decorators:
 
@@ -68,8 +74,6 @@ apps/
 
 </details>
 
-> NestJS + Swagger decorators automatically generate clean OpenAPI specs, which we'll use later for SDK generation. The `operationId` in decorators maps directly to SDK method names.
-
 <details>
 <summary>Test Endpoints</summary>
 
@@ -92,31 +96,30 @@ npm run demo             # Executes try-{service}-api.sh
 
 ### 2. 🏒 Push Specs to SwaggerHub 
 
+> 👻 While this demo uses a centralized workflow for simplicity, each API could have its own independent versioning and publishing process in a microservices setup.
+
 First, APIs are versioned and released with [Changesets](https://github.com/changesets/changesets):
 
 <details>
-<summary>Version management</summary>
+<summary>Version & Release NestJS APIs</summary>
 
 ```bash
-# Version management
 .github/workflows/
-├── version-release.yml   # Handles changesets & version bumps
-└── release-base.yml      # Base release workflow template
+├── version-release.yml   # Version & Release NestJS APIs
+└── release-base.yml      # Shared release workflow
 ```
 
 </details>
 
 Then, OpenAPI specs are generated and pushed to SwaggerHub:
 
-> 👻 While this demo uses a centralized workflow for simplicity, each API could have its own independent versioning and publishing process in a microservices setup.
-
 ```bash
 .github/workflows/
-└── push-spec.yml         # Handles spec versioning & publishing
+└── push-spec.yml         # Version & Publish OpenAPI Specs
 ```
 
-![choose-push-workflow](./assets/docs/push.png)
-![push-spec-workflow-details](./assets/docs/spec.png)
+![workflow-title-push-spec](./assets/docs/workflow-title-push-spec.png)
+![workflow-detail-push-spec](./assets/docs/workflow-detail-push-sepc.png)
 
 Once published, specs are available on SwaggerHub:
 - 📄 [@api-client-sdk-streamline-sample | Products API](https://app.swaggerhub.com/apis/junjie.wu/sample-products-api)
@@ -124,20 +127,20 @@ Once published, specs are available on SwaggerHub:
 
 ### 3. 🎩 Generate & Publish SDK as NPM packages
 
-Based on these [OpenAPI](https://swagger.io/specification/) specs, TypeScript SDKs can be automatically generated (with [`@openapitools/openapi-generator-cli`](https://github.com/OpenAPITools/openapi-generator-cli)) and published as NPM packages.
+> 👻 Instead of keeping generated SDKs in the repo, we generate and publish them directly to NPM.
 
-> 👻 Instead of keeping generated SDKs in the repo, we generate and publish them on-the-fly directly to NPM.
+Based on these [OpenAPI](https://swagger.io/specification/) specifications, TypeScript SDKs are automatically generated (with [`@openapitools/openapi-generator-cli`](https://github.com/OpenAPITools/openapi-generator-cli)) and published as NPM packages:
 
 ```bash
 .github/workflows/
-└── publish-sdk.yml          # Generates & Releases & Publishes SDKs
+└── publish-sdk.yml          # Generate & Release & Publish SDK packages
 
 packages/
-└── openapi-fetch-runtime/   # Shared runtime utilities to minimize bundle size
+└── openapi-fetch-runtime/   # Shared fetch runtime for generated SDKs
 ```
 
-![choose-publish-workflow](./assets/docs/publish.png)
-![publish-sdk-workflow-details](./assets/docs/sdk.png)
+![workflow-title-publish-sdk](./assets/docs/workflow-title-publish-sdk.png)
+![workflow-detail-publish-sdk](./assets/docs/workflow-detail-publish-sdk.png)
 
 Published SDK packages:
 - 🧳 [@api-client-sdk-streamline-sample/products-api-client](https://www.npmjs.com/package/@api-client-sdk-streamline-sample/products-api-client)
@@ -157,7 +160,7 @@ Published SDK packages:
 
 </details>
 
-### 4. 🏗️ API Client Configuration
+### 4. 🎠 API Client Configuration
 
 Now that we have our SDKs published on NPM, let's set up API client configuration in our Next.js app:
 
@@ -165,46 +168,66 @@ Now that we have our SDKs published on NPM, let's set up API client configuratio
 apps/ecom-app/
 ├── app/
 │   └── api/                    # API Routes
-│       ├── products/route.ts   # Products endpoints
-│       └── users/route.ts      # Users endpoints
 └── lib/
-    └── api-client-config/      # Shared client configuration
+    └── api-client-config/      # API client configuration
 ```
 
 Client Configuration Structure:
 
 ```bash
 api-client-config/
-├── configs/            # Environment-based configuration
-├── middleware/         # Request & Response & onError middlewares
-├── errors/             # Error handling & types
-├── cache.ts            # Client instance caching
-├── config.ts           # Base client configuration
-├── factory.ts          # Factory pattern for client creation
-└── logger.ts           # Logging utilities
+├── configs/                     # Environment-based configuration
+├── middlewares/                 # Request & Response & onError middlewares
+├── errors/                      # Error handling & types
+├── api-client-cache.ts          # Client instance caching
+├── api-client-config.ts         # Base client configuration
+├── api-client-factory.ts        # Factory pattern for client creation
+└── logger.ts                    # Logging utilities
 ```
 
-### 5. 🎸 Example usage in Next.js API routes:
+### 5. 🎸 Example usage in Next.js API routes
+
+<details>
+<summary>API Routes Structure</summary>
+
+```
+apps/ecom-app/
+├── app/
+│   └── api/
+│       ├── products/
+│       │   ├── route.ts
+│       │   └── [id]/
+│       │       └── route.ts
+│       └── users/
+│           ├── route.ts
+│           └── [id]/
+│               └── route.ts
+└── lib/
+    └── api-client-config/
+```
+
+</details>
 
 ```typescript
-import { getProductsApi } from '@/lib/api-client-config'
+import { getProductsApi } from '@/lib/api-client-config/api-client-factory'
 
 export async function GET() {
-  const productsApi = getProductsApi()  // Pre-configured client
-  
-  // Clean method names thanks to Swagger decorators:)
-  const products = await productsApi.getAllProducts()
-  
-  return NextResponse.json(products)
+  try {
+    const productsApi = getProductsApi()
+    const products = await productsApi.getAllProducts()
+    return NextResponse.json(products)
+  } catch (error) {
+    return handleApiError(error)
+  }
 }
 ```
 
-## 🧪 Try It Out
+## 🎢 Try It Out
 
 Test the complete workflow:
 
 <details>
-<summary>1. Start API services and Run the Next.js app</summary>
+<summary>1. Start API Services and Run the Next.js App</summary>
 
 ```bash
 # Using Turbo (recommended):
@@ -254,7 +277,7 @@ curl -X POST http://localhost:3000/api/products \
 curl http://localhost:3000/api/products
 
 # Get products by category
-curl http://localhost:3000/api/products?category=electronics
+curl 'http://localhost:3000/api/products?category=electronics'
 
 # Get a specific product
 curl http://localhost:3000/api/products/1
@@ -286,11 +309,12 @@ curl http://localhost:3000/api/users/1
 <summary>🪐 How It Works: A Short Review</summary>
 
 ```
-1. The request hits the Next.js proxy routes
-2. Routes use the generated SDK clients
-3. Clients make requests to local API services
-4. Services process and return the data
-5. Data flows back through the SDK to the application
+1. Request hits the Next.js API routes
+2. Routes instantiate configured SDK clients
+3. SDK clients make HTTP requests to NestJS services
+4. NestJS services process and return the response
+5. SDK clients transform the responses
+6. Next.js routes return the final JSON response
 ```
 
 </details>
