@@ -10,6 +10,10 @@
       "outputs": ["coverage/**"],
       "dependsOn": []
     },
+    "test:e2e": {
+      "inputs": ["test/**/*.ts", "src/**/*.ts"],
+      "dependsOn": []
+    },
     "lint": {},
     "dev": {
       "cache": false,

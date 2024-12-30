@@ -11,15 +11,21 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "test": "turbo test",
+    "test:e2e": "turbo test:e2e",
     "clean": "turbo clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=docs^... && changeset publish"
+    "release": "turbo build --filter=docs^... && changeset publish",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "eslint": "^8.57.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
     "prettier": "^3.2.5",
     "turbo": "^2.3.3"
   },
