@@ -50,10 +50,11 @@ jobs:
         run: |
           if [[ "${{ steps.changesets.outputs.hasChangesets }}" == "true" ]]; then
             echo "✨ Version updates created"
+            shopt -s nullglob
             for changeset in .changeset/*.md; do
               if [ -f "$changeset" ]; then
-                pkg_info=$(grep -A 1 "---" "$changeset")
-                echo "$pkg_info"
+                pkg_info=$(grep -A 1 -e "---" "$changeset" || true)
+                [ ! -z "$pkg_info" ] && echo "$pkg_info"
               fi
             done
           else
@@ -65,12 +66,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: steps.changesets.outputs.hasChangesets == 'true'
         run: |
+          shopt -s nullglob
           for changeset in .changeset/*.md; do
             if [ -f "$changeset" ]; then
-              name=$(grep -A 1 "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | tr -d '"' | awk '{print $1}')
-              version=$(grep -A 1 "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | awk '{print $2}')
+              name=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | tr -d '"' | awk '{print $1}' || true)
+              version=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | awk '{print $2}' || true)
               
-              if [ ! -z "$name" ]; then
+              if [ ! -z "$name" ] && [ ! -z "$version" ]; then
                 echo "Creating release for $name v$version"
                 gh workflow run release-base.yml \
                   -f package-name="$name" \
