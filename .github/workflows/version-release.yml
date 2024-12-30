@@ -16,8 +16,8 @@ permissions:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  version-and-release:
-    name: Version and Release
+  version-packages:
+    name: Version Packages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -41,41 +41,69 @@ jobs:
         run: npm run test
 
       - name: Create Version PR
-        id: changesets
         uses: changesets/action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Print Version Status
-        run: |
-          if [[ "${{ steps.changesets.outputs.hasChangesets }}" == "true" ]]; then
-            echo "✨ Version updates created"
-            for changeset in .changeset/*.md; do
-              if [ -f "$changeset" ]; then
-                pkg_info=$(grep -A 1 -e "---" "$changeset")
-                echo "$pkg_info"
-              fi
-            done
-          else
-            echo "No changes detected - skipping version updates"
-          fi
+  github-releases:
+    name: Create GitHub Releases
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event_name == 'push' && contains(toJSON(github.event.commits.*.removed), '.changeset/'))
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Create Releases for Updated Packages
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Process Version Changes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: steps.changesets.outputs.hasChangesets == 'true'
         run: |
-          for changeset in .changeset/*.md; do
-            if [ -f "$changeset" ]; then
-              name=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | tr -d '"' | awk '{print $1}')
-              version=$(grep -A 1 -e "---" "$changeset" | grep "@api-client-sdk-streamline-sample" | awk '{print $2}')
-              
-              if [ ! -z "$name" ]; then
-                echo "Creating release for $name v$version"
-                gh workflow run release-base.yml \
-                  -f package-name="$name" \
-                  -f version="$version" \
-                  -f type="api"
-              fi
+          declare -A version_changes
+          
+          echo "🔍 Scanning for version changes..."
+          for package_file in $(git diff --name-only HEAD^ HEAD | grep "package.json" | grep -v "node_modules"); do
+            package_name=$(jq -r '.name' "$package_file")
+            new_version=$(jq -r '.version' "$package_file")
+            old_version=$(git show HEAD^:"$package_file" 2>/dev/null | jq -r '.version' || echo "")
+            
+            if [[ ! "$package_name" =~ ^@api-client-sdk-streamline-sample/ ]]; then
+              echo "⏭️ Skipping package $package_name"
+              continue
             fi
+            
+            if [[ ! "$new_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+              echo "⚠️ Invalid version format for $package_name: $new_version"
+              exit 1
+            fi
+            
+            if [[ "$new_version" != "$old_version" ]]; then
+              echo "📦 Package $package_name version change detected:"
+              echo "   $old_version → $new_version"
+              version_changes["$package_name"]="$new_version"
+            fi
+          done
+          
+          if [ ${#version_changes[@]} -eq 0 ]; then
+            echo "ℹ️ No version changes detected"
+            exit 0
+          fi
+          
+          for package_name in "${!version_changes[@]}"; do
+            version="${version_changes[$package_name]}"
+            echo "🎯 Creating release for $package_name v$version"
+            
+            gh workflow run release-base.yml \
+              -f package-name="$package_name" \
+              -f version="$version" \
+              -f type="api"
+            
+            echo "✅ Release workflow triggered for $package_name"
           done
