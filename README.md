@@ -86,7 +86,7 @@ npm run dev              # products: 3001, users: 3002
 # Products API: http://localhost:3001/api-docs
 # Users API:    http://localhost:3002/api-docs
 
-# 3. Test All Endpoints: Run Test Script with Sample Data
+# 3. Run Test Script with Sample Data
 npm run demo             # Executes try-{service}-api.sh
 # products-api → try-products-api.sh
 # users-api   → try-users-api.sh

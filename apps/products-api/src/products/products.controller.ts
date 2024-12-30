@@ -7,7 +7,13 @@ import {
   Query,
   NotFoundException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiBody,
+} from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
@@ -22,6 +28,7 @@ export class ProductsController {
     operationId: 'createProduct',
     summary: 'Create a new product',
   })
+  @ApiBody({ type: CreateProductDto })
   @ApiResponse({
     status: 201,
     description: 'Product created successfully',
@@ -31,8 +38,8 @@ export class ProductsController {
     status: 400,
     description: 'Invalid product data',
   })
-  async create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  async create(@Body() body: CreateProductDto) {
+    return this.productsService.create(body);
   }
 
   @Get()
