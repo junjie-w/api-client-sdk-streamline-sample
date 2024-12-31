@@ -1,11 +1,5 @@
 # @api-client-sdk-streamline-sample/products-api
 
-## 1.1.1
-
-### Patch Changes
-
-- 37f0947: update api controllers
-
 ## 1.1.0
 
 ### Minor Changes
