@@ -62,7 +62,6 @@ jobs:
           else
             NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}
 
-            Package release for ${{ inputs.package-name }}"
           fi
 
           gh release create "$TAG_NAME" \

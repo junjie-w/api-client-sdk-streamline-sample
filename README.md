@@ -50,7 +50,7 @@ root (turbo monorepo)
 
 ### 1. 🏗️ API Development
 
-> 👻 NestJS + Swagger decorators automatically generate clean OpenAPI specs, which will be used later for SDK generation. The `operationId` in decorators maps directly to SDK method names.
+> NestJS + Swagger decorators automatically generate clean OpenAPI specs, which will be used later for SDK generation. The `operationId` in decorators maps directly to SDK method names.
 
 Two NestJS services that auto-generate OpenAPI specs using Swagger decorators:
 
@@ -96,7 +96,7 @@ npm run demo             # Executes try-{service}-api.sh
 
 ### 2. 🏒 Push Specs to SwaggerHub 
 
-> 👻 While this demo uses a centralized workflow for simplicity, each API could have its own independent versioning and publishing process in a microservices setup.
+> While this demo uses a centralized workflow for simplicity, each API could have its own independent versioning and publishing process in a microservices setup.
 
 First, APIs are versioned and released with [Changesets](https://github.com/changesets/changesets):
 
@@ -127,7 +127,7 @@ Once published, API specs are available on SwaggerHub:
 
 ### 3. 🎩 Generate & Publish SDK as NPM packages
 
-> 👻 Instead of keeping generated SDKs in the repo, we generate and publish them directly to NPM.
+> Instead of keeping generated SDKs in the repo, we generate and publish them directly to NPM.
 
 Based on these [OpenAPI](https://swagger.io/specification/) specifications, TypeScript SDKs are automatically generated (with [`@openapitools/openapi-generator-cli`](https://github.com/OpenAPITools/openapi-generator-cli)) and published as NPM packages:
 
@@ -230,7 +230,7 @@ Test the complete workflow:
 <summary>1. Start API Services and Run the Next.js App</summary>
 
 ```bash
-# Using Turbo (recommended):
+# Using Turbo:
 npm run dev
 ```
 
