@@ -60,7 +60,7 @@ jobs:
             Generated from the corresponding OpenAPI specification:
             📄 [@api-client-sdk-streamline-sample | ${DISPLAY_NAME}](${SWAGGER_URL})"
           else
-            NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}
+            NOTES="## ${{ inputs.package-name }} v${{ inputs.version }}"
 
           fi
 
