@@ -15,7 +15,6 @@ on:
         type: string
         description: Package type (api or sdk)
         required: false
-        enum: [api, sdk]
 
 jobs:
   create-release:
