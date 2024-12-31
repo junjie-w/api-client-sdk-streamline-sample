@@ -105,10 +105,23 @@ jobs:
             version="${version_changes[$package_name]}"
             echo "Creating release for $package_name v$version"
             
-            gh workflow run release-base.yml \
-              -f package-name="$package_name" \
-              -f version="$version" \
-              -f type="api"
+            package_name_without_scope=${package_name#@api-client-sdk-streamline-sample/}
+            
+            if [[ "$package_name_without_scope" == "products-api-client" || "$package_name_without_scope" == "users-api-client" ]]; then
+              gh workflow run release-base.yml \
+                -f package-name="$package_name" \
+                -f version="$version" \
+                -f type="sdk"
+            elif [[ "$package_name_without_scope" == "products-api" || "$package_name_without_scope" == "users-api" ]]; then
+              gh workflow run release-base.yml \
+                -f package-name="$package_name" \
+                -f version="$version" \
+                -f type="api"
+            else
+              gh workflow run release-base.yml \
+                -f package-name="$package_name" \
+                -f version="$version"
+            fi
             
             echo "Release workflow triggered for $package_name"
           done
